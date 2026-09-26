@@ -27,7 +27,7 @@ jobs:
       # 1. Check for Unresolved Git Conflicts
       - name: Check for Git Conflict Markers
         run: |
-          if grep -rnw --exclude-dir={node_modules,.git,dist} . -e '<<<<<<<'; then
+          if grep -rnw --exclude-dir={node_modules,.git,dist} --exclude=ci-pipeline.yml . -e '<<<<<<<'; then
             echo "Error: Unresolved git conflict markers found!"
             exit 1
           fi
