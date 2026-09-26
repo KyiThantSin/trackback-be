@@ -1,0 +1,19 @@
+node_modules/
+dist/
+docs/
+.git/
+.gitignore
+
+# Environment files are provided at runtime by Docker Compose.
+.env
+.env.*
+
+# Logs and local package-manager artifacts.
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.cache/
+.tmp/

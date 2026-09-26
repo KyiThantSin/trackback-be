@@ -1,0 +1,16 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: DockerFile 
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NODE_ENV=development
+    env_file:
+      - .env 
+    volumes:
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+      - /app/node_modules
