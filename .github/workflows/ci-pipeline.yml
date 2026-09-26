@@ -1,29 +1,29 @@
-name: Trackback CI Pipeline 
+name: Core Security & Type Checks
 
 on:
   push:
     branches: ['main', 'dev']
   pull_request:
-    branches: ['main','dev']
+    branches: ['main', 'dev']
 
 jobs:
-  verfiy:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth:0 # Needed for secret leak detection across git history
+          fetch-depth: 0 # Needed for secret leak detection across git history
 
       - name: Setup Nodejs
         uses: actions/setup-node@v4
         with:
-          node-version: '26'
+          node-version: '20'
           cache: 'yarn'
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
-      
+
       # 1. Check for Unresolved Git Conflicts
       - name: Check for Git Conflict Markers
         run: |
@@ -31,18 +31,13 @@ jobs:
             echo "Error: Unresolved git conflict markers found!"
             exit 1
           fi
-      
+
       # 2. Check for Secret & ENV Leaks
       - name: Scan for Secret Leaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       # 3. Check TypeScript Type Errors
       - name: Run TypeScript Type Check
         run: yarn tsc --noEmit
-      
-  
-
-
-
