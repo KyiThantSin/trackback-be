@@ -1,8 +1,9 @@
 import 'dotenv/config';
-import express, { type Express, type Request, type Response } from 'express';
+import express, { type Express, type Request, type Response, json, urlencoded } from 'express';
 import gateway from '@/routes/gateway'
 import helmet from "helmet";
 import cors from "cors";
+import { errorHandler } from '@/middlewares/error-handlers';
 
 const app:Express = express();
 const port = Number(process.env.PORT ?? 8080);
@@ -17,7 +18,11 @@ app.use(
   })
 )
 app.use(helmet());
+app.use(json())
+app.use(urlencoded({extended:true}))
 app.use(gateway);
+
+app.use(errorHandler)
 
 app.listen(port, () => {
   console.log(`Server is listening at ${port}`)
