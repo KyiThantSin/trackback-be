@@ -10,6 +10,16 @@ const findByEmail = async (email: string) => {
     }
 };
 
+const findById = async (id: string) => {
+    const userId = id as NonNullable<Awaited<ReturnType<typeof findByEmail>>>['id'];
+    const result = await db.orm.public.User.first({ id: userId });
+    if (!result) return null;
+
+    return {
+        ...result,
+    };
+};
+
 
 const createUser = async (data: {
     name: string;
@@ -20,24 +30,8 @@ const createUser = async (data: {
     return db.orm.public.User.create(data);
 };
 
-const updateRefreshTokenHash = async (data: {
-    userId: NonNullable<Awaited<ReturnType<typeof findByEmail>>>['id'];
-    tokenHash: string;
-}) => {
-    return db.orm.public.User
-        .where({ id: data.userId })
-        .update({ refreshTokenHash: data.tokenHash });
-};
-
-const clearRefreshTokenHash = async (tokenHash: string) => {
-    return db.orm.public.User
-        .where({ refreshTokenHash: tokenHash })
-        .update({ refreshTokenHash: null });
-};
-
 export {
 	findByEmail,
+    findById,
 	createUser,
-    updateRefreshTokenHash,
-    clearRefreshTokenHash,
 };

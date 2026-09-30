@@ -4,7 +4,7 @@ import gateway from '@/routes/gateway'
 import helmet from "helmet";
 import cors from "cors";
 import cookieParser from 'cookie-parser';
-import { errorHandler } from '@/middlewares/error-handlers';
+import { errorHandler } from '@/middlewares/error-handler';
 
 const app:Express = express();
 const port = Number(process.env.PORT ?? 8080);

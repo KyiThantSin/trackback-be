@@ -15,12 +15,23 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       throw new BadRequestError("Email and password are required");
     }
 
-    const result = await authService.login({
+    const response = await authService.login({
       email: email.trim(),
       password,
       rememberMe,
     });
-    return res.status(200).json({ data: result, message: "Login Successfully" });
+    
+    res.cookie("token", response.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      data: response,
+      message: "Login Successfully",
+    });
   } catch (error) {
     return next(error);
   }
@@ -38,13 +49,13 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       throw new BadRequestError("Name, email, password, and role are required");
     }
 
-    const result = await authService.register({
+    const response = await authService.register({
       name: name,
       email: email.trim(),
       password,
       role: role,
     });
-    return res.status(201).json({ data: result, message: "Register Successfully" });
+    return res.status(201).json({ data: response, message: "Register Successfully" });
   } catch (error) {
     return next(error);
   }
@@ -52,13 +63,12 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
 const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { refreshToken } = req.body;
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
 
-    if (typeof refreshToken !== "string" || refreshToken.length === 0) {
-      throw new BadRequestError("Refresh token is required");
-    }
-
-    await authService.logout(refreshToken);
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     return next(error);
