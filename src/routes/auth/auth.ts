@@ -1,8 +1,12 @@
 import { Router } from "express";
-import * as authController from '@/controllers/auth/auth';
+import * as authController from '@/controllers/auth/authController';
 
 const router = Router();
 
-router.get('/login', authController.login);
+// chain of responsibility pattern
+router.post('/login', authController.login);
+router.post('/register', authController.register);
+router.delete('/logout', authController.logout);
+
 
 export default router;

@@ -1,5 +1,9 @@
 # Dependencies
 node_modules/
+node_modules/.prisma/
+
+# Generated Prisma Client
+generated/
 
 # Logs
 logs/
