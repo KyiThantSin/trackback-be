@@ -3,6 +3,7 @@ import * as userRespository from "@/repositories/userRepository";
 import { AuthenticationError, ConflictError } from "@/utils/errors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { createHash } from "node:crypto";
 
 const login = async (data: LoginPayload) => {
   const user = await userRespository.findByEmail(data.email);
@@ -16,9 +17,11 @@ const login = async (data: LoginPayload) => {
   }
 
   const accessSecret = process.env.ACCESS_TOKEN_SECRET;
-  const refreshSecret = process.env.REFRESH_TOKEN_SECRET;
+  const refreshSecret = data.rememberMe
+    ? process.env.REFRESH_TOKEN_SECRET
+    : undefined;
 
-  if (!accessSecret || !refreshSecret) {
+  if (!accessSecret || (data.rememberMe && !refreshSecret)) {
     throw new Error("JWT secrets are not configured");
   }
 
@@ -27,10 +30,18 @@ const login = async (data: LoginPayload) => {
         {
           userId: user.id,
         },
-        refreshSecret,
+        refreshSecret!,
         { expiresIn: "30d" },
       )
     : undefined;
+
+  // update refresh token
+  if (refreshToken) {
+    await userRespository.updateRefreshTokenHash({
+      userId: user.id,
+      tokenHash: createHash("sha256").update(refreshToken).digest("hex"),
+    });
+  }
 
   const accessToken = jwt.sign(
     {
@@ -73,6 +84,13 @@ const register = async (data: RegisterPayload) => {
     createdAt: createdUser.createdAt,
   };
 
-  return { userInfo };
+  return userInfo;
 };
-export { login, register };
+
+const logout = async (refreshToken: string) => {
+  await userRespository.clearRefreshTokenHash(
+    createHash("sha256").update(refreshToken).digest("hex"),
+  );
+};
+
+export { login, register, logout };

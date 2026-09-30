@@ -10,6 +10,7 @@ const findByEmail = async (email: string) => {
     }
 };
 
+
 const createUser = async (data: {
     name: string;
     email: string;
@@ -19,7 +20,24 @@ const createUser = async (data: {
     return db.orm.public.User.create(data);
 };
 
+const updateRefreshTokenHash = async (data: {
+    userId: NonNullable<Awaited<ReturnType<typeof findByEmail>>>['id'];
+    tokenHash: string;
+}) => {
+    return db.orm.public.User
+        .where({ id: data.userId })
+        .update({ refreshTokenHash: data.tokenHash });
+};
+
+const clearRefreshTokenHash = async (tokenHash: string) => {
+    return db.orm.public.User
+        .where({ refreshTokenHash: tokenHash })
+        .update({ refreshTokenHash: null });
+};
+
 export {
 	findByEmail,
 	createUser,
+    updateRefreshTokenHash,
+    clearRefreshTokenHash,
 };

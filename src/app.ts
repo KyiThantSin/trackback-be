@@ -3,6 +3,7 @@ import express, { type Express, type Request, type Response, json, urlencoded } 
 import gateway from '@/routes/gateway'
 import helmet from "helmet";
 import cors from "cors";
+import cookieParser from 'cookie-parser';
 import { errorHandler } from '@/middlewares/error-handlers';
 
 const app:Express = express();
@@ -20,6 +21,7 @@ app.use(
 app.use(helmet());
 app.use(json())
 app.use(urlencoded({extended:true}))
+app.use(cookieParser())
 app.use(gateway);
 
 app.use(errorHandler)

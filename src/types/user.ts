@@ -3,7 +3,6 @@ interface RegisterPayload{
     email: string;
     role: string;
     password: string;
-    rememberMe?: boolean;
 }
 
 interface LoginPayload{

@@ -17,6 +17,7 @@ export const defineUserModel = (
       name: field.text(),
       password: field.text(),
       role: field.text(),
+      refreshTokenHash: field.text().optional(),
       createdAt: field.temporal.createdAtString(),
       updatedAt: field.temporal.updatedAtString(),
     },
