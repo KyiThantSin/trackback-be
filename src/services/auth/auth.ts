@@ -35,6 +35,8 @@ const login = async (payload: LoginPayload) => {
     email: user.email,
     role: user.role,
     createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+    deletedAt: user.deletedAt,
   };
 
   return { accessToken, userInfo };
@@ -60,6 +62,8 @@ const register = async (data: RegisterPayload) => {
     email: createdUser.email,
     role: createdUser.role,
     createdAt: createdUser.createdAt,
+    updatedAt: createdUser.updatedAt,
+    deletedAt: createdUser.deletedAt,
   };
 
   return userInfo;

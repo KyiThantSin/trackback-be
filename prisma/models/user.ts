@@ -19,5 +19,6 @@ export const defineUserModel = (
       role: field.text(),
       createdAt: field.temporal.createdAtString(),
       updatedAt: field.temporal.updatedAtString(),
+      deletedAt: field.temporal.timestamptzString().optional(),
     },
   });

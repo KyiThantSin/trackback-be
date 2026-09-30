@@ -30,8 +30,22 @@ const createUser = async (data: {
     return db.orm.public.User.create(data);
 };
 
+const updateUser = async (data: {
+    userId: NonNullable<Awaited<ReturnType<typeof findByEmail>>>['id'];
+    updates: {
+        name?: string;
+        email?: string;
+        password?: string;
+    };
+}) => {
+    return db.orm.public.User
+        .where({ id: data.userId })
+        .update(data.updates);
+};
+
 export {
 	findByEmail,
     findById,
 	createUser,
+    updateUser,
 };

@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'0b4a390decb48e1a99207428bbe8786d4e0e59ee946a246654c4bcb26b823ef7'>;
+  StorageHashBase<'a96155b9303b738d5eb59d8a3b9debed2c042089f7c17ad39c76a5b7ebaf4274'>;
 export type ExecutionHash =
   ExecutionHashBase<'d981a7188c9cedad0856087fa3e998676a4733151acb09a1341dbb995380432d'>;
 export type ProfileHash =
@@ -260,6 +260,7 @@ export type FieldOutputTypes = {
     };
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: Char<36>;
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -281,6 +282,7 @@ export type FieldInputTypes = {
     };
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['sql/char@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -302,6 +304,7 @@ export type StorageColumnTypes = {
     };
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: Char<36>;
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -323,6 +326,7 @@ export type StorageColumnInputTypes = {
     };
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly deletedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['sql/char@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -346,6 +350,7 @@ export namespace Models {
   };
   export type public_User = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    deletedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     email: CodecTypes['pg/text@1']['output'];
     id: Char<36>;
     name: CodecTypes['pg/text@1']['output'];
@@ -428,6 +433,11 @@ type ContractBase = Omit<
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
+                };
+                readonly deletedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
                 };
                 readonly email: {
                   readonly nativeType: 'text';
@@ -558,6 +568,13 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly deletedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
               readonly email: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -605,6 +622,7 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
+                readonly deletedAt: { readonly column: 'deletedAt' };
                 readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
