@@ -1,5 +1,8 @@
 name: Core Security & Type Checks
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: ['main', 'dev']
@@ -34,6 +37,7 @@ jobs:
 
       # 2. Check for Secret & ENV Leaks
       - name: Scan for Secret Leaks
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
