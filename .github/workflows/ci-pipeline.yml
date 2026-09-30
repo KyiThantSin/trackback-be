@@ -2,6 +2,7 @@ name: Core Security & Type Checks
 
 permissions:
   contents: read
+  pull-requests: read
 
 on:
   push:
