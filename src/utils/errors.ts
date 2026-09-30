@@ -35,3 +35,12 @@ export class AuthenticationError extends AppError{
         super(message)
     }
 }
+
+/* 409 conflict error */
+export class ConflictError extends AppError{
+    public readonly statusCode = 409; 
+
+    constructor(message:string = "Conflict Occured"){
+        super(message)
+    }
+}

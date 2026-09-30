@@ -26,6 +26,31 @@ const login = async (req:Request, res:Response, next: NextFunction ) => {
     }
 };
 
+const register = async (req:Request, res:Response, next:NextFunction) => {
+    try{
+        const { name, email, password, role } = req.body;
+
+        if (
+            name.length === 0 ||
+            email.trim().length === 0 ||
+            password.length === 0
+        ) {
+            throw new BadRequestError('Name, email, password, and role are required');
+        }
+
+        const result = await authService.register({
+            name: name.trim(),
+            email: email.trim(),
+            password,
+            role: role.trim(),
+        });
+        res.status(201).json(result)
+    }catch(error){
+        next(error)
+    }
+}
+
 export {
-    login
+    login,
+    register
 };

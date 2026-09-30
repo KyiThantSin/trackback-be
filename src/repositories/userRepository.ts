@@ -10,6 +10,16 @@ const findByEmail = async (email: string) => {
     }
 };
 
+const createUser = async (data: {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+}) => {
+    return db.orm.public.User.create(data);
+};
+
 export {
 	findByEmail,
+	createUser,
 };
