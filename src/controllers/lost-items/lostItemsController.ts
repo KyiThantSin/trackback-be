@@ -2,6 +2,76 @@ import jwt from 'jsonwebtoken';
 import { BadRequestError, AuthenticationError } from '@/utils/errors';
 import { type NextFunction, type Request, type Response } from 'express';
 import * as lostItemService from '@/services/lost-items/lostItems';
+import type { LostItemStatus } from '@/types/lostItem';
+
+const getLostItems = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const getTextQuery = (name: string): string | undefined => {
+      const value = req.query[name];
+
+      if (value === undefined) return undefined;
+      if (typeof value !== 'string') {
+        throw new BadRequestError(`${name} must be a single value`);
+      }
+
+      return value.trim();
+    };
+
+    const getPositiveIntegerQuery = (name: string, defaultValue: number): number => {
+      const value = getTextQuery(name);
+      if (value === undefined) return defaultValue;
+
+      const parsed = Number(value);
+      if (!Number.isInteger(parsed) || parsed <= 0) {
+        throw new BadRequestError(`${name} must be a positive integer`);
+      }
+
+      return parsed;
+    };
+
+    const keyword = getTextQuery('keyword');
+    const category = getTextQuery('category');
+    const location = getTextQuery('location');
+    const dateFrom = getTextQuery('dateFrom');
+    const dateTo = getTextQuery('dateTo');
+    const rawStatus = getTextQuery('status');
+    const page = getPositiveIntegerQuery('page', 1);
+    const limit = getPositiveIntegerQuery('limit', 10);
+
+    if (limit > 100) {
+      throw new BadRequestError('limit must not exceed 100');
+    }
+
+    if (dateFrom && Number.isNaN(Date.parse(dateFrom))) {
+      throw new BadRequestError('dateFrom must be a valid date');
+    }
+    if (dateTo && Number.isNaN(Date.parse(dateTo))) {
+      throw new BadRequestError('dateTo must be a valid date');
+    }
+    if (dateFrom && dateTo && Date.parse(dateFrom) > Date.parse(dateTo)) {
+      throw new BadRequestError('dateFrom must be earlier than or equal to dateTo');
+    }
+
+    if (rawStatus && !['OPEN', 'RECOVERED', 'CLOSED'].includes(rawStatus)) {
+      throw new BadRequestError('status must be OPEN, RECOVERED, or CLOSED');
+    }
+
+    const response = await lostItemService.listLostItems({
+      keyword,
+      category,
+      location,
+      dateFrom,
+      dateTo,
+      status: rawStatus as LostItemStatus | undefined,
+      page,
+      limit,
+    });
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(error);
+  }
+};
 
 const createLostItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -57,4 +127,4 @@ const createLostItem = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export { createLostItem };
+export { createLostItem, getLostItems };

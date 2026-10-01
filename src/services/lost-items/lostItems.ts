@@ -1,5 +1,42 @@
-import type { CreateLostItemPayload, LostItemPost } from '@/types/lostItem';
+import type {
+  CreateLostItemPayload,
+  ListLostItemsQuery,
+  ListLostItemsResult,
+  LostItemPost,
+} from '@/types/lostItem';
 import * as lostItemRepository from '@/repositories/lostItemRepository';
+
+const listLostItems = async (query: ListLostItemsQuery): Promise<ListLostItemsResult> => {
+  const allItems = await lostItemRepository.findAllLostItems();
+  const keyword = query.keyword?.toLocaleLowerCase();
+  const category = query.category?.toLocaleLowerCase();
+  const location = query.location?.toLocaleLowerCase();
+
+  const filteredItems = allItems.filter((item) => {
+    const itemDate = Date.parse(item.lastSeenDate);
+    const matchesKeyword = !keyword || [
+      item.title,
+      item.description,
+      item.category,
+      item.lastSeenLocation,
+    ].some((value) => value.toLocaleLowerCase().includes(keyword));
+
+    return matchesKeyword &&
+      (!category || item.category.toLocaleLowerCase() === category) &&
+      (!location || item.lastSeenLocation.toLocaleLowerCase().includes(location)) &&
+      (!query.dateFrom || itemDate >= Date.parse(query.dateFrom)) &&
+      (!query.dateTo || itemDate <= Date.parse(query.dateTo)) &&
+      (!query.status || item.status === query.status);
+  });
+
+  const offset = (query.page - 1) * query.limit;
+
+  return {
+    items: filteredItems.slice(offset, offset + query.limit),
+    total: filteredItems.length,
+    page: query.page,
+  };
+};
 
 const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost> => {
   return lostItemRepository.createLostItem({
@@ -13,4 +50,4 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
   });
 };
 
-export { createLostItem };
+export { createLostItem, listLostItems };
