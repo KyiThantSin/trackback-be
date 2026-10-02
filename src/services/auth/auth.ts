@@ -1,8 +1,9 @@
 import type { LoginPayload, RegisterPayload, User } from "@/types/user";
 import * as userRespository from "@/repositories/userRepository";
-import { AuthenticationError, ConflictError } from "@/utils/errors";
+import { AuthenticationError, ConflictError, NotFoundError } from "@/utils/errors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import sendEmail from "@/utils/sendEmail";
 
 const login = async (payload: LoginPayload) => {
   const user = await userRespository.findByEmail(payload.email);
@@ -33,7 +34,7 @@ const login = async (payload: LoginPayload) => {
     id: user.id,
     name: user.name,
     email: user.email,
-    role: user.role,
+    role: user.role as User["role"],
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     deletedAt: user.deletedAt,
@@ -60,7 +61,7 @@ const register = async (data: RegisterPayload) => {
     id: createdUser.id,
     name: createdUser.name,
     email: createdUser.email,
-    role: createdUser.role,
+    role: createdUser.role as User["role"],
     createdAt: createdUser.createdAt,
     updatedAt: createdUser.updatedAt,
     deletedAt: createdUser.deletedAt,
@@ -69,4 +70,77 @@ const register = async (data: RegisterPayload) => {
   return userInfo;
 };
 
-export { login, register };
+const forgotPassword = async (email: string) => {
+  const user = await userRespository.findByEmail(email);
+
+  if(!user){
+    throw new NotFoundError("Account has not been created with this email")
+  }
+
+  const resetSecret = process.env.RESET_PASSWORD_SECRET;
+  const frontendUrl = process.env.CORS_ORIGIN;
+
+  if (!resetSecret || !frontendUrl) {
+    throw new Error("RESET_PASSWORD_SECRET and FRONTEND_URL must be configured");
+  }
+
+  const resetToken = jwt.sign(
+    { userId: user.id, type: "password-reset" },
+    resetSecret,
+    { expiresIn: "15m" },
+  );
+  
+  // front-end page route
+  const resetUrl = new URL("/reset-password", frontendUrl);
+  resetUrl.searchParams.set("token", resetToken);
+
+  await sendEmail({
+    receiverEmail: user.email,
+    recipientName: user.name,
+    type: "FORGOT",
+    url: resetUrl.toString(),
+  });
+};
+
+const resetPassword = async (token: string, password: string) => {
+  const resetSecret = process.env.RESET_PASSWORD_SECRET;
+
+  if (!resetSecret) {
+    throw new Error("RESET_PASSWORD_SECRET must be configured");
+  }
+
+  let payload: string | jwt.JwtPayload;
+  try {
+    payload = jwt.verify(token, resetSecret);
+  } catch {
+    throw new AuthenticationError("Reset link is invalid or expired");
+  }
+
+  if (
+    typeof payload === "string" ||
+    payload.type !== "password-reset" ||
+    typeof payload.userId !== "string"
+  ) {
+    throw new AuthenticationError("Reset link is invalid or expired");
+  }
+
+  const user = await userRespository.findById(payload.userId);
+  if (!user) {
+    throw new AuthenticationError("Reset link is invalid or expired");
+  }
+
+  await userRespository.updateUser({
+    userId: user.id,
+    updates: { password: await bcrypt.hash(password, 10) },
+  });
+
+  // strategy pattern + factory pattern
+  await sendEmail({
+    receiverEmail: user.email,
+    recipientName: user.name,
+    type: "RESET",
+  });
+
+};
+
+export { login, register, forgotPassword, resetPassword };
