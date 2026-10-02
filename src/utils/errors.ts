@@ -36,6 +36,15 @@ export class AuthenticationError extends AppError{
     }
 }
 
+/* 403 Forbidden */
+export class ForbiddenError extends AppError{
+    public readonly statusCode = 403;
+
+    constructor(message:string = "Forbidden"){
+        super(message)
+    }
+}
+
 /* 409 conflict error */
 export class ConflictError extends AppError{
     public readonly statusCode = 409; 

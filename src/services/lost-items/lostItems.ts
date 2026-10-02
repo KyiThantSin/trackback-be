@@ -5,7 +5,27 @@ import type {
   LostItemPost,
 } from '@/types/lostItem';
 import * as lostItemRepository from '@/repositories/lostItemRepository';
-import { NotFoundError } from '@/utils/errors';
+import { ConflictError, ForbiddenError, NotFoundError } from '@/utils/errors';
+
+const recoverLostItem = async (
+  id: string,
+  userId: string,
+): Promise<{ success: true; status: 'RECOVERED' }> => {
+  const lostItem = await lostItemRepository.findLostItemById(id);
+
+  if (!lostItem) {
+    throw new NotFoundError('Lost item not found');
+  }
+  if (lostItem.userId !== userId) {
+    throw new ForbiddenError('You do not own this lost item');
+  }
+  if (lostItem.status !== 'OPEN') {
+    throw new ConflictError('Post Already Closed');
+  }
+
+  await lostItemRepository.updateLostItemStatus(id, 'RECOVERED');
+  return { success: true, status: 'RECOVERED' };
+};
 
 const getLostItemById = async (id: string): Promise<LostItemPost> => {
   const lostItem = await lostItemRepository.findLostItemById(id);
@@ -61,4 +81,4 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
   });
 };
 
-export { createLostItem, getLostItemById, listLostItems };
+export { createLostItem, getLostItemById, listLostItems, recoverLostItem };
