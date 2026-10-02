@@ -4,6 +4,21 @@ import { type NextFunction, type Request, type Response } from 'express';
 import * as lostItemService from '@/services/lost-items/lostItems';
 import type { LostItemStatus } from '@/types/lostItem';
 
+const getLostItemById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const itemId = req.params.id;
+
+    if (typeof itemId !== 'string' || itemId.length === 0) {
+      throw new BadRequestError('Lost item ID is required');
+    }
+
+    const response = await lostItemService.getLostItemById(itemId);
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const getLostItems = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const getTextQuery = (name: string): string | undefined => {
@@ -127,4 +142,4 @@ const createLostItem = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export { createLostItem, getLostItems };
+export { createLostItem, getLostItemById, getLostItems };

@@ -5,6 +5,17 @@ import type {
   LostItemPost,
 } from '@/types/lostItem';
 import * as lostItemRepository from '@/repositories/lostItemRepository';
+import { NotFoundError } from '@/utils/errors';
+
+const getLostItemById = async (id: string): Promise<LostItemPost> => {
+  const lostItem = await lostItemRepository.findLostItemById(id);
+
+  if (!lostItem) {
+    throw new NotFoundError('Lost item not found');
+  }
+
+  return lostItem;
+};
 
 const listLostItems = async (query: ListLostItemsQuery): Promise<ListLostItemsResult> => {
   const allItems = await lostItemRepository.findAllLostItems();
@@ -50,4 +61,4 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
   });
 };
 
-export { createLostItem, listLostItems };
+export { createLostItem, getLostItemById, listLostItems };

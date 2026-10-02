@@ -19,6 +19,29 @@ const findAllLostItems = async (): Promise<LostItemPost[]> => {
   }));
 };
 
+const findLostItemById = async (id: string): Promise<LostItemPost | null> => {
+  const lostItemId = id as NonNullable<
+    Awaited<ReturnType<typeof db.orm.public.LostItemPost.first>>
+  >['id'];
+  const result = await db.orm.public.LostItemPost.first({ id: lostItemId });
+
+  if (!result) return null;
+
+  return {
+    id: result.id,
+    title: result.title,
+    description: result.description,
+    category: result.category,
+    lastSeenLocation: result.lastSeenLocation,
+    lastSeenDate: result.lastSeenDate,
+    status: result.status as LostItemPost['status'],
+    photoUrl: result.photoUrl ?? null,
+    userId: result.userId,
+    createdAt: result.createdAt,
+    updatedAt: result.updatedAt,
+  };
+};
+
 const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost> => {
   const result = await db.orm.public.LostItemPost.create({
     title: data.title,
@@ -46,4 +69,4 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
   };
 };
 
-export { createLostItem, findAllLostItems };
+export { createLostItem, findAllLostItems, findLostItemById };
