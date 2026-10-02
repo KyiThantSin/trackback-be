@@ -5,6 +5,7 @@ import { secureRoute } from '@/middlewares/secure-route';
 const router = Router();
 
 router.get('/', lostItemsController.getLostItems);
+router.get('/:id', lostItemsController.getLostItemById);
 router.post('/', secureRoute, lostItemsController.createLostItem);
 
 export default router;
