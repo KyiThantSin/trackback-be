@@ -6,6 +6,7 @@ const router = Router();
 
 router.get('/', lostItemsController.getLostItems);
 router.get('/:id', lostItemsController.getLostItemById);
+router.patch('/:id/recover', secureRoute, lostItemsController.recoverLostItem);
 router.post('/', secureRoute, lostItemsController.createLostItem);
 
 export default router;

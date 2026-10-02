@@ -1,5 +1,5 @@
 import { db } from '@/../prisma/db';
-import type { CreateLostItemPayload, LostItemPost } from '@/types/lostItem';
+import type { CreateLostItemPayload, LostItemPost, LostItemStatus } from '@/types/lostItem';
 
 const findAllLostItems = async (): Promise<LostItemPost[]> => {
   const results = await db.orm.public.LostItemPost.all();
@@ -42,6 +42,14 @@ const findLostItemById = async (id: string): Promise<LostItemPost | null> => {
   };
 };
 
+const updateLostItemStatus = async (id: string, status: LostItemStatus): Promise<void> => {
+  const lostItemId = id as NonNullable<
+    Awaited<ReturnType<typeof db.orm.public.LostItemPost.first>>
+  >['id'];
+
+  await db.orm.public.LostItemPost.where({ id: lostItemId }).update({ status });
+};
+
 const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost> => {
   const result = await db.orm.public.LostItemPost.create({
     title: data.title,
@@ -69,4 +77,4 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
   };
 };
 
-export { createLostItem, findAllLostItems, findLostItemById };
+export { createLostItem, findAllLostItems, findLostItemById, updateLostItemStatus };
