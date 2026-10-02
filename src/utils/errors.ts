@@ -1,11 +1,30 @@
 // Base custome error extends native JS error
 export abstract class AppError extends Error{
     public abstract readonly statusCode: number;
+    public readonly code?: string;
     
-    constructor(message: string) {
+    constructor(message: string, code?: string) {
         super(message)
+        this.code = code;
         Object.setPrototypeOf(this, new.target.prototype)
         Error.captureStackTrace(this, this.constructor)
+    }
+}
+
+export class ForbiddenError extends AppError {
+    public readonly statusCode = 403;
+
+    constructor(message = "Forbidden", code = "FORBIDDEN") {
+        super(message, code);
+    }
+}
+
+export class ClaimError extends AppError {
+    public readonly statusCode: number;
+
+    constructor(statusCode: number, code: string, message: string) {
+        super(message, code);
+        this.statusCode = statusCode;
     }
 }
 
