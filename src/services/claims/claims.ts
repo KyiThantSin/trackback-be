@@ -75,9 +75,8 @@ const submitClaim = async (
   await notificationRepository.create({
     id: randomUUID(),
     userId: foundItem.authorId,
-    type: 'CLAIM_SUBMITTED',
     message: `${claimant.name} has submitted a claim for your found item`,
-    referenceId: foundItemPostId,
+    relatedPostId: foundItemPostId,
   });
 
   return toClaimResponse(claim);
@@ -168,11 +167,10 @@ const reviewClaim = async (id: string, decision: ReviewDecision, userId: string)
   await notificationRepository.create({
     id: randomUUID(),
     userId: claim.claimantUserId,
-    type: decision === 'approve' ? 'CLAIM_APPROVED' : 'CLAIM_REJECTED',
     message: decision === 'approve'
       ? 'Your claim has been approved! Please go to the Lost & Found office to collect your item.'
       : 'Your claim has been rejected. You may submit another claim or contact the finder.',
-    referenceId: claim.id,
+    relatedPostId: claim.foundItemPostId,
   });
 
   return toClaimResponse(updatedClaim ?? { ...claim, status });

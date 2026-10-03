@@ -335,6 +335,13 @@
                   }
                 }
               },
+              "isRead": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "message": {
                 "nullable": false,
                 "type": {
@@ -342,7 +349,7 @@
                   "kind": "scalar"
                 }
               },
-              "referenceId": {
+              "relatedPostId": {
                 "nullable": true,
                 "type": {
                   "codecId": "sql/char@1",
@@ -350,20 +357,6 @@
                   "typeParams": {
                     "length": 36
                   }
-                }
-              },
-              "type": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
                 }
               },
               "userId": {
@@ -403,17 +396,14 @@
                 "id": {
                   "column": "id"
                 },
+                "isRead": {
+                  "column": "isRead"
+                },
                 "message": {
                   "column": "message"
                 },
-                "referenceId": {
-                  "column": "referenceId"
-                },
-                "type": {
-                  "column": "type"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
+                "relatedPostId": {
+                  "column": "relatedPostId"
                 },
                 "userId": {
                   "column": "userId"
@@ -913,28 +903,23 @@
                     "length": 36
                   }
                 },
+                "isRead": {
+                  "codecId": "pg/bool@1",
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "message": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
                 },
-                "referenceId": {
+                "relatedPostId": {
                   "codecId": "sql/char@1",
                   "nativeType": "character",
                   "nullable": true,
                   "typeParams": {
                     "length": 36
                   }
-                },
-                "type": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
                 },
                 "userId": {
                   "codecId": "sql/char@1",
@@ -1102,10 +1087,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6b5e2075da2b0ab4267ab69bcf8ce9e158ec8562d09583d32d49197e57223b16"
+    "storageHash": "4833cac09bda36a62841a2fbedce99f22d7bd4a0d603b4a43bcfbc3d22bf6e3c"
   },
   "execution": {
-    "executionHash": "736589ee6781a373308cb6e8fd73f4667d0cf28efe5f18cfb0f319cbf8bd424f",
+    "executionHash": "069962d08b4353768722ee8f1aead859e6eca7792608f20615bd480e066d3a05",
     "mutations": {
       "defaults": [
         {
@@ -1200,21 +1185,6 @@
           },
           "ref": {
             "column": "id",
-            "namespace": "public",
-            "table": "Notification"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
             "namespace": "public",
             "table": "Notification"
           }
