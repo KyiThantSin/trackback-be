@@ -5,6 +5,7 @@ import type {
   LostItemPost,
 } from '@/types/lostItem';
 import * as lostItemRepository from '@/repositories/lostItemRepository';
+import * as matchingService from '@/services/matching/matching';
 import { ConflictError, ForbiddenError, NotFoundError } from '@/errors/http-errors';
 
 const recoverLostItem = async (
@@ -70,7 +71,7 @@ const listLostItems = async (query: ListLostItemsQuery): Promise<ListLostItemsRe
 };
 
 const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost> => {
-  return lostItemRepository.createLostItem({
+  const lostItem = await lostItemRepository.createLostItem({
     title: data.title.trim(),
     description: data.description.trim(),
     category: data.category.trim(),
@@ -79,6 +80,9 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
     photoUrl: data.photoUrl?.trim(),
     userId: data.userId,
   });
+
+  await matchingService.runMatching(lostItem.id, data.userId);
+  return lostItem;
 };
 
 export { createLostItem, getLostItemById, listLostItems, recoverLostItem };

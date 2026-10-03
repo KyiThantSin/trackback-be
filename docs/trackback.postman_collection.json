@@ -344,6 +344,36 @@
       ]
     },
     {
+      "name": "matching",
+      "description": "Owner-protected match lookup endpoints and the authenticated manual matching trigger.",
+      "item": [
+        {
+          "name": "run matching for found post",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{apiBase}}/matching/run/{{foundItemPostId}}"
+          }
+        },
+        {
+          "name": "get matches for lost item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/lost-items/{{lostItemId}}/matches"
+          }
+        },
+        {
+          "name": "get matches for found item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/found-items/{{foundItemPostId}}/matches"
+          }
+        }
+      ]
+    },
+    {
       "name": "notifications",
       "description": "Login as a user who has received a claim notification, then list notifications before marking one or all as read.",
       "item": [
