@@ -5,6 +5,7 @@ import type {
   ListFoundItemsResult,
 } from '@/types/foundItem';
 import * as foundItemRepository from '@/repositories/foundItemRepository';
+import { NotFoundError } from '@/errors/http-errors';
 
 const createFoundItem = async (data: CreateFoundItemPayload): Promise<FoundItemPost> => {
   return foundItemRepository.createFoundItem({
@@ -50,4 +51,14 @@ const listFoundItems = async (query: ListFoundItemsQuery): Promise<ListFoundItem
   };
 };
 
-export { createFoundItem, listFoundItems };
+const getFoundItemById = async (id: string): Promise<FoundItemPost> => {
+  const foundItem = await foundItemRepository.findFoundItemById(id);
+
+  if (!foundItem) {
+    throw new NotFoundError('Found item not found');
+  }
+
+  return foundItem;
+};
+
+export { createFoundItem, getFoundItemById, listFoundItems };

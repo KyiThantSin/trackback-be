@@ -5,6 +5,7 @@ import { secureRoute } from '@/middlewares/secure-route';
 const router = Router();
 
 router.get('/', secureRoute, foundItemsController.getFoundItems);
+router.get('/:id', secureRoute, foundItemsController.getFoundItemById);
 router.post('/', secureRoute, foundItemsController.createFoundItem);
 
 export default router;

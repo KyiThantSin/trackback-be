@@ -46,4 +46,27 @@ const findAllFoundItems = async (): Promise<FoundItemPost[]> => {
   }));
 };
 
-export { createFoundItem, findAllFoundItems };
+const findFoundItemById = async (id: string): Promise<FoundItemPost | null> => {
+  const foundItemId = id as NonNullable<
+    Awaited<ReturnType<typeof db.orm.public.FoundItemPost.first>>
+  >['id'];
+  const result = await db.orm.public.FoundItemPost.first({ id: foundItemId });
+
+  if (!result) return null;
+
+  return {
+    id: result.id,
+    title: result.title,
+    description: result.description,
+    category: result.category,
+    foundLocation: result.foundLocation,
+    foundDate: result.foundDate,
+    status: result.status as FoundItemPost['status'],
+    photoUrl: result.photoUrl ?? null,
+    userId: result.userId,
+    createdAt: result.createdAt,
+    updatedAt: result.updatedAt,
+  };
+};
+
+export { createFoundItem, findAllFoundItems, findFoundItemById };

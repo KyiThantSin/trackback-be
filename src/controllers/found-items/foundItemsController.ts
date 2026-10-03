@@ -73,6 +73,20 @@ const getFoundItems = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
+const getFoundItemById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const itemId = req.params.id;
+    if (typeof itemId !== 'string' || itemId.length === 0) {
+      throw new BadRequestError('Found item ID is required');
+    }
+
+    const response = await foundItemService.getFoundItemById(itemId);
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const createFoundItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies?.token;
@@ -144,4 +158,4 @@ const createFoundItem = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export { createFoundItem, getFoundItems };
+export { createFoundItem, getFoundItemById, getFoundItems };
