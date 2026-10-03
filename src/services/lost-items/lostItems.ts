@@ -6,7 +6,7 @@ import type {
   UpdateLostItemPayload,
 } from '@/types/lostItem';
 import * as lostItemRepository from '@/repositories/lostItemRepository';
-import { ConflictError, ForbiddenError, NotFoundError } from '@/utils/errors';
+import { ConflictError, ForbiddenError, NotFoundError } from '@/errors/http-errors';
 
 const recoverLostItem = async (
   id: string,

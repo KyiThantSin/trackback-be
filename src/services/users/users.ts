@@ -1,6 +1,6 @@
 import type { UpdateUserPayload, User } from '@/types/user';
 import * as userRepository from '@/repositories/userRepository';
-import { ConflictError, NotFoundError } from '@/utils/errors';
+import { ConflictError, NotFoundError } from '@/errors/http-errors';
 import bcrypt from 'bcrypt';
 
 const getUser = async (userId: string): Promise<User> => {
@@ -14,7 +14,7 @@ const getUser = async (userId: string): Promise<User> => {
 		id: user.id,
 		name: user.name,
 		email: user.email,
-		role: user.role,
+		role: user.role as User["role"],
 		createdAt: user.createdAt,
 		updatedAt: user.updatedAt,
 		deletedAt: user.deletedAt,
@@ -60,7 +60,7 @@ const updateUser = async (
 		id: updatedUser.id,
 		name: updatedUser.name,
 		email: updatedUser.email,
-		role: updatedUser.role,
+		role: updatedUser.role as User["role"],
 		createdAt: updatedUser.createdAt,
 		updatedAt: updatedUser.updatedAt,
 		deletedAt: updatedUser.deletedAt,

@@ -1,0 +1,56 @@
+import type { EmailTemplate } from "@/types/email";
+
+const escapeHtml = (value: string) =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+// Factory pattern: builds the shared email layout.
+const createPasswordEmailTemplate = (
+  title: string,
+  message: string,
+  actionUrl?: string,
+  recipientName = "Buddy",
+  resetLink = false,
+): EmailTemplate => ({
+  subject: title,
+  html: `
+    <div style="background:#f4f7fb;padding:32px;font-family:Arial,sans-serif;color:#172033">
+      <div style="max-width:560px;margin:0 auto;background:#ffffff;padding:32px;border-radius:12px">
+        <h1 style="margin:0 0 20px;font-size:24px">Trackback</h1>
+        <p>Hi ${escapeHtml(recipientName)},</p>
+        <p>${message}</p>
+        ${actionUrl ? `<p style="margin:28px 0">
+          <a href="${escapeHtml(actionUrl)}" style="background:#2563eb;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;display:inline-block">
+            Continue
+          </a>
+        </p>` : ""}
+        <p style="font-size:13px;color:#667085">${resetLink ? "This password reset link expires in 15 minutes. If you did not request this email, you can ignore it." : "If you did not change your password, please contact support immediately."}</p>
+      </div>
+    </div>
+  `,
+});
+
+// Strategy pattern: selects content for each email type.
+const emailTemplates = {
+  FORGOT: (resetUrl: string, recipientName?: string) =>
+    createPasswordEmailTemplate(
+      "Reset your Trackback password",
+      "We received a request to reset your Trackback password. Click the button below to choose a new password.",
+      resetUrl,
+      recipientName,
+      true,
+    ),
+  RESET: (loginUrl: string, recipientName?: string) =>
+    createPasswordEmailTemplate(
+      "Your Trackback password was reset successfully",
+      "Your Trackback password has been reset successfully. You can now sign in with your new password.",
+      loginUrl,
+      recipientName,
+    ),
+};
+
+export default emailTemplates;

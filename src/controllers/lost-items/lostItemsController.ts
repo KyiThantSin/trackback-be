@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { BadRequestError, AuthenticationError } from '@/utils/errors';
+import { BadRequestError, AuthenticationError } from '@/errors/http-errors';
 import { type NextFunction, type Request, type Response } from 'express';
 import * as lostItemService from '@/services/lost-items/lostItems';
 import type { LostItemStatus, UpdateLostItemPayload } from '@/types/lostItem';
