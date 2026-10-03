@@ -3,6 +3,7 @@ import type {
   ListLostItemsQuery,
   ListLostItemsResult,
   LostItemPost,
+  UpdateLostItemPayload,
 } from '@/types/lostItem';
 import * as lostItemRepository from '@/repositories/lostItemRepository';
 import { ConflictError, ForbiddenError, NotFoundError } from '@/utils/errors';
@@ -25,6 +26,41 @@ const recoverLostItem = async (
 
   await lostItemRepository.updateLostItemStatus(id, 'RECOVERED');
   return { success: true, status: 'RECOVERED' };
+};
+
+const updateLostItem = async (
+  id: string,
+  userId: string,
+  data: UpdateLostItemPayload,
+): Promise<LostItemPost> => {
+  const lostItem = await lostItemRepository.findLostItemById(id);
+
+  if (!lostItem) {
+    throw new NotFoundError('Lost item not found');
+  }
+  if (lostItem.userId !== userId) {
+    throw new ForbiddenError('You do not own this lost item');
+  }
+  if (lostItem.status === 'CLOSED') {
+    throw new ConflictError('Closed lost items cannot be edited');
+  }
+
+  const updates: UpdateLostItemPayload = { ...data };
+  if (data.title !== undefined) updates.title = data.title.trim();
+  if (data.description !== undefined) updates.description = data.description.trim();
+  if (data.category !== undefined) updates.category = data.category.trim();
+  if (data.lastSeenLocation !== undefined) {
+    updates.lastSeenLocation = data.lastSeenLocation.trim();
+  }
+
+  await lostItemRepository.updateLostItem(id, updates);
+
+  const updatedLostItem = await lostItemRepository.findLostItemById(id);
+  if (!updatedLostItem) {
+    throw new NotFoundError('Lost item not found');
+  }
+
+  return updatedLostItem;
 };
 
 const getLostItemById = async (id: string): Promise<LostItemPost> => {
@@ -81,4 +117,4 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
   });
 };
 
-export { createLostItem, getLostItemById, listLostItems, recoverLostItem };
+export { createLostItem, getLostItemById, listLostItems, recoverLostItem, updateLostItem };
