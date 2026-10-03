@@ -1,0 +1,212 @@
+[
+  {
+    "id": "dropColumn.Notification.referenceId",
+    "label": "Drop column \"referenceId\" from \"Notification\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "referenceId",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"referenceId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "referenceId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"referenceId\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" DROP COLUMN \"referenceId\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"referenceId\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "referenceId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.Notification.type",
+    "label": "Drop column \"type\" from \"Notification\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "type",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"type\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "type"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"type\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" DROP COLUMN \"type\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"type\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.Notification.updatedAt",
+    "label": "Drop column \"updatedAt\" from \"Notification\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updatedAt",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updatedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "updatedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"updatedAt\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" DROP COLUMN \"updatedAt\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"updatedAt\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "updatedAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Notification.relatedPostId",
+    "label": "Add column \"relatedPostId\" to \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "relatedPostId",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"relatedPostId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "relatedPostId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"relatedPostId\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" ADD COLUMN \"relatedPostId\" character(36)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"relatedPostId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "relatedPostId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Notification.isRead",
+    "label": "Add column \"isRead\" to \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "isRead",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"isRead\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "isRead"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"isRead\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" ADD COLUMN \"isRead\" bool NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"isRead\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "isRead"
+        ]
+      }
+    ]
+  }
+]
