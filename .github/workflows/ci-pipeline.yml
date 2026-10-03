@@ -26,7 +26,12 @@ jobs:
           cache: 'yarn'
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: |
+          for attempt in 1 2 3; do
+            yarn install --frozen-lockfile --network-timeout 120000 && exit 0
+            echo "Yarn install failed on attempt ${attempt}; retrying..."
+          done
+          exit 1
 
       # 1. Check for Unresolved Git Conflicts
       - name: Check for Git Conflict Markers
