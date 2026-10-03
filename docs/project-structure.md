@@ -51,6 +51,34 @@ npx tsc --noEmit
     profile     product     banner
      image       image       image
 
+### Using Cloudinary Folders
+
+`cloudinaryFolders.ts` keeps upload destinations in one place:
+
+```ts
+const CLOUDINARY_FOLDERS = {
+  USER_PROFILE: "users/profile",
+  LOST_ITEM: "lost-items/images",
+};
+```
+
+Pass the folder key to the upload service to organize the images in cloudinary:
+
+```ts
+const images = await uploadImages(files, CLOUDINARY_FOLDERS.LOST_ITEM);
+
+const images = await uploadImages(files, CLOUDINARY_FOLDERS.USER_PROFILE);
+
+```
+
+With `CLOUDINARY_ROOT_FOLDER=trackback-dev`, the images are stored under:
+
+```text
+trackback-dev/lost-items/images
+```
+
+Use `"USER_PROFILE"` for profile images. Add a new key to `CLOUDINARY_FOLDERS` when a new image category is needed.
+
 ### with Docker (Optional No need to run, You can start with yarn dev to start the project)
 
 Requirements: Docker Desktop must be running and `.env` must exist.
