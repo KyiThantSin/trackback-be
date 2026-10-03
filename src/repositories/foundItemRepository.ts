@@ -28,4 +28,22 @@ const createFoundItem = async (data: CreateFoundItemPayload): Promise<FoundItemP
   };
 };
 
-export { createFoundItem };
+const findAllFoundItems = async (): Promise<FoundItemPost[]> => {
+  const results = await db.orm.public.FoundItemPost.all();
+
+  return results.map((result) => ({
+    id: result.id,
+    title: result.title,
+    description: result.description,
+    category: result.category,
+    foundLocation: result.foundLocation,
+    foundDate: result.foundDate,
+    status: result.status as FoundItemPost['status'],
+    photoUrl: result.photoUrl ?? null,
+    userId: result.userId,
+    createdAt: result.createdAt,
+    updatedAt: result.updatedAt,
+  }));
+};
+
+export { createFoundItem, findAllFoundItems };

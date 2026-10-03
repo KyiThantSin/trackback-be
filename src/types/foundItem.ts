@@ -23,3 +23,20 @@ export interface FoundItemPost {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ListFoundItemsQuery {
+  keyword?: string;
+  category?: string;
+  location?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  status?: FoundItemStatus;
+  page: number;
+  limit: number;
+}
+
+export interface ListFoundItemsResult {
+  items: FoundItemPost[];
+  total: number;
+  page: number;
+}
