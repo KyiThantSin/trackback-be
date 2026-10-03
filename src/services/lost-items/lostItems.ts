@@ -41,8 +41,8 @@ const updateLostItem = async (
   if (lostItem.userId !== userId) {
     throw new ForbiddenError('You do not own this lost item');
   }
-  if (lostItem.status === 'CLOSED') {
-    throw new ConflictError('Closed lost items cannot be edited');
+  if (lostItem.status !== 'OPEN') {
+    throw new ConflictError('Only open lost items can be edited');
   }
 
   const updates: UpdateLostItemPayload = { ...data };
