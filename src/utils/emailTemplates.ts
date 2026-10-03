@@ -14,6 +14,7 @@ const createPasswordEmailTemplate = (
   message: string,
   resetUrl?: string,
   recipientName = "Buddy",
+  resetLink = false,
 ): EmailTemplate => ({
   subject: title,
   html: `
@@ -27,7 +28,7 @@ const createPasswordEmailTemplate = (
             Continue
           </a>
         </p>` : ""}
-        <p style="font-size:13px;color:#667085">${resetUrl ? "This password reset link expires in 15 minutes. If you did not request this email, you can ignore it. If you did not change your password, please contact support immediately." : ""}</p>
+        <p style="font-size:13px;color:#667085">${resetLink ? "This password reset link expires in 15 minutes. If you did not request this email, you can ignore it." : "If you did not change your password, please contact support immediately."}</p>
       </div>
     </div>
   `,
@@ -41,12 +42,13 @@ const emailTemplates = {
       "We received a request to reset your Trackback password. Click the button below to choose a new password.",
       resetUrl,
       recipientName,
+      true,
     ),
-  RESET: (_resetUrl: string | undefined, recipientName?: string) =>
+  RESET: (loginUrl: string, recipientName?: string) =>
     createPasswordEmailTemplate(
       "Your Trackback password was reset successfully",
       "Your Trackback password has been reset successfully. You can now sign in with your new password.",
-      undefined,
+      loginUrl,
       recipientName,
     ),
 };

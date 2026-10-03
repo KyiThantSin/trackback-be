@@ -77,14 +77,19 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
 
 const forgotPassword = async (req:Request, res:Response, next:NextFunction) => {
   try{
-    const email = req.body.email;
+    const email = req.body?.email;
 
     if (typeof email !== "string" || email.trim().length === 0) {
       throw new BadRequestError("Email is required");
     }
 
-    await authService.forgotPassword(email.trim());
-    return res.status(200).json({ message: "Forgot password email sent successfully"})
+    const result = await authService.forgotPassword(email.trim());
+    return res.status(200).json({
+      message: "Forgot password email sent successfully",
+      ...(process.env.NODE_ENV === "development"
+        ? { resetToken: result.resetToken, resetUrl: result.resetUrl }
+        : {}),
+    });
   }catch(error){
     return next(error)
   }

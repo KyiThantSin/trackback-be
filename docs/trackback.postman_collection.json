@@ -27,13 +27,13 @@
               }
             },
             "url": {
-              "raw": "{{apiBase}}/users/01a0f0de-b7a6-7536-a680-262293d0602d",
+              "raw": "{{apiBase}}/users/01a1004a-1255-754f-9d93-3d1d128bdb1c",
               "host": [
                 "{{apiBase}}"
               ],
               "path": [
                 "users",
-                "01a0f0de-b7a6-7536-a680-262293d0602d"
+                "01a1004a-1255-754f-9d93-3d1d128bdb1c"
               ],
               "query": [
                 {
@@ -174,7 +174,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"kyi@gmail.com\",\n    \"password\": \"Password@123\",\n    \"rememberMe\":true\n}",
+              "raw": "{\n    \"email\": \"kyithantsin4321@gmail.com\",\n    \"password\": \"Password@123\",\n    \"rememberMe\":true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -193,6 +193,88 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"kyithantsin4321@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{apiBase}}/auth/forgot-password",
+              "host": [
+                "{{apiBase}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "\"Kyi\"",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "\"kyi@gmail.com\"",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reset-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"password\":\"Password@1234\",\n    \"token\":\"{{json_web_token_1832}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{apiBase}}/auth/reset-password",
+              "host": [
+                "{{apiBase}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "\"Kyi\"",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "\"kyi@gmail.com\"",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }
@@ -201,6 +283,10 @@
     {
       "key": "apiBase",
       "value": ""
+    },
+    {
+      "key": "json_web_token_1832",
+      "secret": true
     }
   ]
 }

@@ -100,13 +100,19 @@ const forgotPassword = async (email: string) => {
     type: "FORGOT",
     url: resetUrl.toString(),
   });
+
+  return {
+    resetToken,
+    resetUrl: resetUrl.toString(),
+  };
 };
 
 const resetPassword = async (token: string, password: string) => {
   const resetSecret = process.env.RESET_PASSWORD_SECRET;
+  const frontendUrl = process.env.CORS_ORIGIN;
 
-  if (!resetSecret) {
-    throw new Error("RESET_PASSWORD_SECRET must be configured");
+  if (!resetSecret || !frontendUrl) {
+    throw new Error("RESET_PASSWORD_SECRET and FRONTEND_URL must be configured");
   }
 
   let payload: string | jwt.JwtPayload;
@@ -139,6 +145,7 @@ const resetPassword = async (token: string, password: string) => {
     receiverEmail: user.email,
     recipientName: user.name,
     type: "RESET",
+    url: new URL("/login", frontendUrl).toString(), // login page route
   });
 
 };

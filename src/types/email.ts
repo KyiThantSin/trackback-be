@@ -4,7 +4,7 @@ interface EmailTemplatePayLoad {
     senderEmail?: string;
     receiverEmail: string;
     type: EmailType;
-    url?: string;
+    url: string;
     recipientName?: string;
 }
 

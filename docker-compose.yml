@@ -1,8 +1,9 @@
 services:
   app:
-    build: 
+    build:
       context: .
-      dockerfile: Dockerfile 
+      dockerfile: Dockerfile
+      target: dev
     command: yarn dev
     ports:
       - "8080:8080"
@@ -10,8 +11,16 @@ services:
       - PORT=8080
       - NODE_ENV=development
     env_file:
-      - .env 
+      - .env
     volumes:
       - ./src:/app/src
       - ./prisma:/app/prisma
-      - /app/node_modules
+      - node_modules:/app/node_modules
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m" #when log reach 10mb, starts new one
+        max-file: "3" # keep at most 3 files, deleting the oldest.
+
+volumes:
+  node_modules:
