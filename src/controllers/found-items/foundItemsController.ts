@@ -162,6 +162,39 @@ const updateFoundItem = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
+const deleteFoundItem = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const itemId = req.params.id;
+    if (typeof itemId !== 'string' || itemId.length === 0) {
+      throw new BadRequestError('Found item ID is required');
+    }
+
+    const token = req.cookies?.token;
+    const accessSecret = process.env.ACCESS_TOKEN_SECRET;
+
+    if (!token) {
+      throw new AuthenticationError('Authentication required');
+    }
+    if (!accessSecret) {
+      throw new Error('ACCESS_TOKEN_SECRET is not configured');
+    }
+
+    const payload = jwt.verify(token, accessSecret);
+    if (
+      typeof payload !== 'object' ||
+      typeof payload.userId !== 'string' ||
+      payload.userId.length === 0
+    ) {
+      throw new AuthenticationError('Invalid access token');
+    }
+
+    const response = await foundItemService.deleteFoundItem(itemId, payload.userId);
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const createFoundItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies?.token;
@@ -233,4 +266,4 @@ const createFoundItem = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export { createFoundItem, getFoundItemById, getFoundItems, updateFoundItem };
+export { createFoundItem, deleteFoundItem, getFoundItemById, getFoundItems, updateFoundItem };

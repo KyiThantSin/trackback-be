@@ -81,4 +81,18 @@ const updateFoundItem = async (id: string, data: UpdateFoundItemPayload): Promis
   await db.orm.public.FoundItemPost.where({ id: foundItemId }).update(data);
 };
 
-export { createFoundItem, findAllFoundItems, findFoundItemById, updateFoundItem };
+const deleteFoundItem = async (id: string): Promise<void> => {
+  const foundItemId = id as NonNullable<
+    Awaited<ReturnType<typeof db.orm.public.FoundItemPost.first>>
+  >['id'];
+
+  await db.orm.public.FoundItemPost.where({ id: foundItemId }).delete();
+};
+
+export {
+  createFoundItem,
+  deleteFoundItem,
+  findAllFoundItems,
+  findFoundItemById,
+  updateFoundItem,
+};

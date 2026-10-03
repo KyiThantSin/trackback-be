@@ -92,4 +92,18 @@ const updateFoundItem = async (
   return updatedFoundItem;
 };
 
-export { createFoundItem, getFoundItemById, listFoundItems, updateFoundItem };
+const deleteFoundItem = async (id: string, userId: string): Promise<{ success: true }> => {
+  const foundItem = await foundItemRepository.findFoundItemById(id);
+
+  if (!foundItem) {
+    throw new NotFoundError('Found item not found');
+  }
+  if (foundItem.userId !== userId) {
+    throw new ForbiddenError('You do not own this found item');
+  }
+
+  await foundItemRepository.deleteFoundItem(id);
+  return { success: true };
+};
+
+export { createFoundItem, deleteFoundItem, getFoundItemById, listFoundItems, updateFoundItem };
