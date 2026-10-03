@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'05649fecaff940e4c6707d66bf5693bb797c42f5a5ba8ecde5db03317113c792'>;
+  StorageHashBase<'6b5e2075da2b0ab4267ab69bcf8ce9e158ec8562d09583d32d49197e57223b16'>;
 export type ExecutionHash =
-  ExecutionHashBase<'9c6408f3978b34436546e50e53d39d519c6d09bff812406d658591d106eb1b11'>;
+  ExecutionHashBase<'736589ee6781a373308cb6e8fd73f4667d0cf28efe5f18cfb0f319cbf8bd424f'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -261,6 +261,19 @@ export type FieldOutputTypes = {
       readonly status: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly LostItemPost: {
+      readonly category: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
+      readonly id: Char<36>;
+      readonly lastSeenDate: CodecTypes['pg/text@1']['output'];
+      readonly lastSeenLocation: CodecTypes['pg/text@1']['output'];
+      readonly photoUrl: CodecTypes['pg/text@1']['output'] | null;
+      readonly status: CodecTypes['pg/text@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly userId: Char<36>;
+    };
     readonly Notification: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: Char<36>;
@@ -308,6 +321,19 @@ export type FieldInputTypes = {
       readonly proofPhotoUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly LostItemPost: {
+      readonly category: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['sql/char@1']['input'];
+      readonly lastSeenDate: CodecTypes['pg/text@1']['input'];
+      readonly lastSeenLocation: CodecTypes['pg/text@1']['input'];
+      readonly photoUrl: CodecTypes['pg/text@1']['input'] | null;
+      readonly status: CodecTypes['pg/text@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['sql/char@1']['input'];
     };
     readonly Notification: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -357,6 +383,19 @@ export type StorageColumnTypes = {
       readonly status: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly LostItemPost: {
+      readonly category: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
+      readonly id: Char<36>;
+      readonly lastSeenDate: CodecTypes['pg/text@1']['output'];
+      readonly lastSeenLocation: CodecTypes['pg/text@1']['output'];
+      readonly photoUrl: CodecTypes['pg/text@1']['output'] | null;
+      readonly status: CodecTypes['pg/text@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly userId: Char<36>;
+    };
     readonly Notification: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: Char<36>;
@@ -404,6 +443,19 @@ export type StorageColumnInputTypes = {
       readonly proofPhotoUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly LostItemPost: {
+      readonly category: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['sql/char@1']['input'];
+      readonly lastSeenDate: CodecTypes['pg/text@1']['input'];
+      readonly lastSeenLocation: CodecTypes['pg/text@1']['input'];
+      readonly photoUrl: CodecTypes['pg/text@1']['input'] | null;
+      readonly status: CodecTypes['pg/text@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['sql/char@1']['input'];
     };
     readonly Notification: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -456,6 +508,21 @@ export namespace Models {
     foundItem: public_Post;
     readonly [RelationKeys]?: 'claimant' | 'foundItem';
   };
+  export type public_LostItemPost = {
+    category: CodecTypes['pg/text@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    description: CodecTypes['pg/text@1']['output'];
+    id: Char<36>;
+    lastSeenDate: CodecTypes['pg/text@1']['output'];
+    lastSeenLocation: CodecTypes['pg/text@1']['output'];
+    photoUrl: CodecTypes['pg/text@1']['output'] | null;
+    status: CodecTypes['pg/text@1']['output'];
+    title: CodecTypes['pg/text@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    userId: Char<36>;
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
   export type public_Notification = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     id: Char<36>;
@@ -494,15 +561,17 @@ export namespace Models {
     role: CodecTypes['pg/text@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     claims: public_Claim[];
+    lostItems: public_LostItemPost[];
     notifications: public_Notification[];
     posts: public_Post[];
-    readonly [RelationKeys]?: 'claims' | 'notifications' | 'posts';
+    readonly [RelationKeys]?: 'claims' | 'lostItems' | 'notifications' | 'posts';
   };
 }
 
 export declare const models: {
   public: {
     Claim: Models.public_Claim;
+    LostItemPost: Models.public_LostItemPost;
     Notification: Models.public_Notification;
     Post: Models.public_Post;
     User: Models.public_User;
@@ -576,6 +645,71 @@ type ContractBase = Omit<
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
+            readonly LostItemPost: {
+              columns: {
+                readonly category: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+                readonly description: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'character';
+                  readonly codecId: 'sql/char@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly length: 36 };
+                };
+                readonly lastSeenDate: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly lastSeenLocation: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly photoUrl: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly title: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+                readonly userId: {
+                  readonly nativeType: 'character';
+                  readonly codecId: 'sql/char@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly length: 36 };
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
@@ -761,6 +895,10 @@ type ContractBase = Omit<
   readonly targetFamily: 'sql';
   readonly roots: {
     readonly Claim: { readonly namespace: 'public' & NamespaceId; readonly model: 'Claim' };
+    readonly LostItemPost: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'LostItemPost';
+    };
     readonly Notification: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Notification';
@@ -862,6 +1000,96 @@ type ContractBase = Omit<
                 readonly proofPhotoUrl: { readonly column: 'proofPhotoUrl' };
                 readonly status: { readonly column: 'status' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly LostItemPost: {
+            readonly fields: {
+              readonly category: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly description: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/char@1';
+                  readonly typeParams: { readonly length: 36 };
+                };
+              };
+              readonly lastSeenDate: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly lastSeenLocation: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly photoUrl: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/char@1';
+                  readonly typeParams: { readonly length: 36 };
+                };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'LostItemPost';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly category: { readonly column: 'category' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly description: { readonly column: 'description' };
+                readonly id: { readonly column: 'id' };
+                readonly lastSeenDate: { readonly column: 'lastSeenDate' };
+                readonly lastSeenLocation: { readonly column: 'lastSeenLocation' };
+                readonly photoUrl: { readonly column: 'photoUrl' };
+                readonly status: { readonly column: 'status' };
+                readonly title: { readonly column: 'title' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly userId: { readonly column: 'userId' };
               };
             };
           };
@@ -1112,6 +1340,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['claimantUserId'];
                 };
               };
+              readonly lostItems: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'LostItemPost';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
               readonly notifications: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1199,6 +1438,31 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'Claim';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'createdAt';
+            readonly namespace: 'public';
+            readonly table: 'LostItemPost';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'uuidv7'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'id';
+            readonly namespace: 'public';
+            readonly table: 'LostItemPost';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'LostItemPost';
           };
         },
         {

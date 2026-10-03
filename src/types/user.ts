@@ -1,7 +1,8 @@
+type RoleType = 'USER' | 'ADMIN'
 interface RegisterPayload{
     name: string;
     email: string;
-    role: string;
+    role: RoleType;
     password: string;
 }
 
@@ -21,7 +22,7 @@ interface User{
     id:string;
     name:string;
     email:string;
-    role:string;
+    role: RoleType;
     createdAt:string;
     updatedAt:string;
     deletedAt:string | null;
@@ -31,5 +32,6 @@ export type {
     RegisterPayload,
     LoginPayload,
     UpdateUserPayload,
-    User
+    User,
+    RoleType
 }

@@ -13,7 +13,8 @@
     "dotenv": "^18.0.4",
     "express": "^5.2.1",
     "helmet": "^8.3.0",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^10.0.13"
   },
   "devDependencies": {
     "@prisma/cli-engine": "0.6.1",
@@ -31,7 +32,9 @@
     "start": "node dist/app.js",
     "contract:emit": "prisma contract emit",
     "docker:dev": "docker compose up --build -d",
-    "docker:dev:down": "docker compose down",
-    "docker:prod": "docker build -t trackback . && docker run --rm -p 8080:8080 --env-file .env trackback"
+    "docker:dev:down": "docker compose down -v",
+    "docker:prod": "docker build --target prod -t trackback . && docker run --rm -p 8080:8080 --env-file .env trackback",
+    "docker:dev:logs": "docker compose logs -f app",
+    "docker:clean": "docker system prune -f && docker builder prune -f"
   }
 }
