@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import * as notificationRepository from '@/repositories/notificationRepository';
 import type { NotificationResponse, NotificationsListResponse } from '@/types/notification';
-import { ClaimError, ForbiddenError } from '@/utils/errors';
+import { ClaimError, ForbiddenError } from '@/errors/http-errors';
 
 const toNotificationResponse = (notification: NotificationResponse): NotificationResponse => ({
   id: notification.id,

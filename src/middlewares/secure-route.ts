@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { AuthenticationError } from "@/utils/errors";
+import { AuthenticationError } from "@/errors/http-errors";
 import { type NextFunction, type Request, type Response } from "express";
 
 const secureRoute = (req: Request, _res: Response, next: NextFunction) => {

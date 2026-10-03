@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import * as claimService from '@/services/claims/claims';
 import type { ClaimRole, ClaimStatus, ReviewDecision } from '@/types/claim';
-import { BadRequestError, AuthenticationError } from '@/utils/errors';
+import { BadRequestError, AuthenticationError } from '@/errors/http-errors';
 
 const currentUserId = (req: Request) => {
   if (!req.userId) {

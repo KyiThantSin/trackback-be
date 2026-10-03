@@ -12,7 +12,7 @@ import type {
   ReviewDecision,
   SubmitClaimRequest,
 } from '@/types/claim';
-import { ClaimError, ForbiddenError, NotFoundError } from '@/utils/errors';
+import { ClaimError, ForbiddenError, NotFoundError } from '@/errors/http-errors';
 
 const toClaimResponse = (claim: {
   id: string;

@@ -1,4 +1,4 @@
-import type {EmailTemplate} from "@/types/email"
+import type { EmailTemplate } from "@/types/email";
 
 const escapeHtml = (value: string) =>
   value
@@ -8,11 +8,11 @@ const escapeHtml = (value: string) =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
-// factory pattern
+// Factory pattern: builds the shared email layout.
 const createPasswordEmailTemplate = (
   title: string,
   message: string,
-  resetUrl?: string,
+  actionUrl?: string,
   recipientName = "Buddy",
   resetLink = false,
 ): EmailTemplate => ({
@@ -23,8 +23,8 @@ const createPasswordEmailTemplate = (
         <h1 style="margin:0 0 20px;font-size:24px">Trackback</h1>
         <p>Hi ${escapeHtml(recipientName)},</p>
         <p>${message}</p>
-        ${resetUrl ? `<p style="margin:28px 0">
-          <a href="${escapeHtml(resetUrl)}" style="background:#2563eb;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;display:inline-block">
+        ${actionUrl ? `<p style="margin:28px 0">
+          <a href="${escapeHtml(actionUrl)}" style="background:#2563eb;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;display:inline-block">
             Continue
           </a>
         </p>` : ""}
@@ -34,7 +34,7 @@ const createPasswordEmailTemplate = (
   `,
 });
 
-// strategy pattern
+// Strategy pattern: selects content for each email type.
 const emailTemplates = {
   FORGOT: (resetUrl: string, recipientName?: string) =>
     createPasswordEmailTemplate(
