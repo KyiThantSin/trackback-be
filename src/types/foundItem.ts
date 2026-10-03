@@ -10,6 +10,15 @@ export interface CreateFoundItemPayload {
   userId: string;
 }
 
+export interface UpdateFoundItemPayload {
+  title?: string;
+  description?: string;
+  category?: string;
+  foundLocation?: string;
+  foundDate?: string;
+  photoUrl?: string | null;
+}
+
 export interface FoundItemPost {
   id: string;
   title: string;

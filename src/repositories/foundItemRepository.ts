@@ -1,5 +1,9 @@
 import { db } from '@/../prisma/db';
-import type { CreateFoundItemPayload, FoundItemPost } from '@/types/foundItem';
+import type {
+  CreateFoundItemPayload,
+  FoundItemPost,
+  UpdateFoundItemPayload,
+} from '@/types/foundItem';
 
 const createFoundItem = async (data: CreateFoundItemPayload): Promise<FoundItemPost> => {
   const result = await db.orm.public.FoundItemPost.create({
@@ -69,4 +73,12 @@ const findFoundItemById = async (id: string): Promise<FoundItemPost | null> => {
   };
 };
 
-export { createFoundItem, findAllFoundItems, findFoundItemById };
+const updateFoundItem = async (id: string, data: UpdateFoundItemPayload): Promise<void> => {
+  const foundItemId = id as NonNullable<
+    Awaited<ReturnType<typeof db.orm.public.FoundItemPost.first>>
+  >['id'];
+
+  await db.orm.public.FoundItemPost.where({ id: foundItemId }).update(data);
+};
+
+export { createFoundItem, findAllFoundItems, findFoundItemById, updateFoundItem };

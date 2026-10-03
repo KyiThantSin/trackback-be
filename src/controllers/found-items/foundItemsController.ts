@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { BadRequestError, AuthenticationError } from '@/errors/http-errors';
 import { type NextFunction, type Request, type Response } from 'express';
 import * as foundItemService from '@/services/found-items/foundItems';
-import type { FoundItemStatus } from '@/types/foundItem';
+import type { FoundItemStatus, UpdateFoundItemPayload } from '@/types/foundItem';
 
 const getFoundItems = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -87,6 +87,81 @@ const getFoundItemById = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
+const updateFoundItem = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const itemId = req.params.id;
+    if (typeof itemId !== 'string' || itemId.length === 0) {
+      throw new BadRequestError('Found item ID is required');
+    }
+
+    const token = req.cookies?.token;
+    const accessSecret = process.env.ACCESS_TOKEN_SECRET;
+
+    if (!token) {
+      throw new AuthenticationError('Authentication required');
+    }
+    if (!accessSecret) {
+      throw new Error('ACCESS_TOKEN_SECRET is not configured');
+    }
+
+    const payload = jwt.verify(token, accessSecret);
+    if (
+      typeof payload !== 'object' ||
+      typeof payload.userId !== 'string' ||
+      payload.userId.length === 0
+    ) {
+      throw new AuthenticationError('Invalid access token');
+    }
+
+    const body = req.body ?? {};
+    const updates: UpdateFoundItemPayload = {};
+    const getOptionalText = (value: unknown, name: string): string | undefined => {
+      if (value === undefined) return undefined;
+      if (typeof value !== 'string' || value.trim().length === 0) {
+        throw new BadRequestError(`${name} must be a non-empty string`);
+      }
+      return value.trim();
+    };
+
+    const title = getOptionalText(body.title, 'title');
+    const description = getOptionalText(body.description, 'description');
+    const category = getOptionalText(body.category, 'category');
+    const foundLocation = getOptionalText(body.foundLocation, 'foundLocation');
+
+    if (title !== undefined) updates.title = title;
+    if (description !== undefined) updates.description = description;
+    if (category !== undefined) updates.category = category;
+    if (foundLocation !== undefined) updates.foundLocation = foundLocation;
+
+    if (body.foundDate !== undefined) {
+      const foundDate = getOptionalText(body.foundDate, 'foundDate');
+      if (foundDate && Number.isNaN(Date.parse(foundDate))) {
+        throw new BadRequestError('foundDate must be a valid date');
+      }
+      if (foundDate) updates.foundDate = new Date(foundDate).toISOString();
+    }
+
+    if (body.photoUrl !== undefined) {
+      if (
+        body.photoUrl !== null &&
+        (typeof body.photoUrl !== 'string' || body.photoUrl.trim().length === 0)
+      ) {
+        throw new BadRequestError('photoUrl must be a non-empty string or null');
+      }
+      updates.photoUrl = typeof body.photoUrl === 'string' ? body.photoUrl.trim() : null;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      throw new BadRequestError('At least one field must be provided');
+    }
+
+    const response = await foundItemService.updateFoundItem(itemId, payload.userId, updates);
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const createFoundItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies?.token;
@@ -158,4 +233,4 @@ const createFoundItem = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export { createFoundItem, getFoundItemById, getFoundItems };
+export { createFoundItem, getFoundItemById, getFoundItems, updateFoundItem };

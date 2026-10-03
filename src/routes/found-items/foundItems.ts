@@ -6,6 +6,7 @@ const router = Router();
 
 router.get('/', secureRoute, foundItemsController.getFoundItems);
 router.get('/:id', secureRoute, foundItemsController.getFoundItemById);
+router.patch('/:id', secureRoute, foundItemsController.updateFoundItem);
 router.post('/', secureRoute, foundItemsController.createFoundItem);
 
 export default router;

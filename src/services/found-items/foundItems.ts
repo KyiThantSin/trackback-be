@@ -3,9 +3,10 @@ import type {
   FoundItemPost,
   ListFoundItemsQuery,
   ListFoundItemsResult,
+  UpdateFoundItemPayload,
 } from '@/types/foundItem';
 import * as foundItemRepository from '@/repositories/foundItemRepository';
-import { NotFoundError } from '@/errors/http-errors';
+import { ForbiddenError, NotFoundError } from '@/errors/http-errors';
 
 const createFoundItem = async (data: CreateFoundItemPayload): Promise<FoundItemPost> => {
   return foundItemRepository.createFoundItem({
@@ -61,4 +62,34 @@ const getFoundItemById = async (id: string): Promise<FoundItemPost> => {
   return foundItem;
 };
 
-export { createFoundItem, getFoundItemById, listFoundItems };
+const updateFoundItem = async (
+  id: string,
+  userId: string,
+  data: UpdateFoundItemPayload,
+): Promise<FoundItemPost> => {
+  const foundItem = await foundItemRepository.findFoundItemById(id);
+
+  if (!foundItem) {
+    throw new NotFoundError('Found item not found');
+  }
+  if (foundItem.userId !== userId) {
+    throw new ForbiddenError('You do not own this found item');
+  }
+
+  const updates: UpdateFoundItemPayload = { ...data };
+  if (data.title !== undefined) updates.title = data.title.trim();
+  if (data.description !== undefined) updates.description = data.description.trim();
+  if (data.category !== undefined) updates.category = data.category.trim();
+  if (data.foundLocation !== undefined) updates.foundLocation = data.foundLocation.trim();
+
+  await foundItemRepository.updateFoundItem(id, updates);
+
+  const updatedFoundItem = await foundItemRepository.findFoundItemById(id);
+  if (!updatedFoundItem) {
+    throw new NotFoundError('Found item not found');
+  }
+
+  return updatedFoundItem;
+};
+
+export { createFoundItem, getFoundItemById, listFoundItems, updateFoundItem };
