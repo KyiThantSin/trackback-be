@@ -344,6 +344,50 @@
       ]
     },
     {
+      "name": "notifications",
+      "description": "Login as a user who has received a claim notification, then list notifications before marking one or all as read.",
+      "item": [
+        {
+          "name": "list my notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/notifications?page=1&limit=20"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const items = pm.response.json().items || [];",
+                  "if (items.length > 0) {",
+                  "    pm.collectionVariables.set('notificationId', items[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "mark notification as read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/notifications/{{notificationId}}/read"
+          }
+        },
+        {
+          "name": "mark all notifications as read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/notifications/read-all"
+          }
+        }
+      ]
+    },
+    {
       "name": "claims",
       "description": "Set foundItemPostId to an existing Post table ID before submitting a claim. The HTTP-only token cookie is stored by Postman's cookie jar after login.",
       "item": [
@@ -524,6 +568,10 @@
     },
     {
       "key": "lostItemId",
+      "value": ""
+    },
+    {
+      "key": "notificationId",
       "value": ""
     }
   ]
