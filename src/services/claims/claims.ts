@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import * as claimRepository from '@/repositories/claimRepository';
-import * as notificationRepository from '@/repositories/notificationRepository';
+import * as notificationService from '@/services/notifications/notifications';
 import * as postRepository from '@/repositories/postRepository';
 import * as userRepository from '@/repositories/userRepository';
 import type {
@@ -72,13 +72,11 @@ const submitClaim = async (
     claimantUserId,
   });
 
-  await notificationRepository.create({
-    id: randomUUID(),
-    userId: foundItem.authorId,
-    type: 'CLAIM_SUBMITTED',
-    message: `${claimant.name} has submitted a claim for your found item`,
-    referenceId: foundItemPostId,
-  });
+  await notificationService.notifyUser(
+    foundItem.authorId,
+    `${claimant.name} has submitted a claim for your found item`,
+    foundItemPostId,
+  );
 
   return toClaimResponse(claim);
 };
@@ -165,15 +163,13 @@ const reviewClaim = async (id: string, decision: ReviewDecision, userId: string)
     });
   }
 
-  await notificationRepository.create({
-    id: randomUUID(),
-    userId: claim.claimantUserId,
-    type: decision === 'approve' ? 'CLAIM_APPROVED' : 'CLAIM_REJECTED',
-    message: decision === 'approve'
+  await notificationService.notifyUser(
+    claim.claimantUserId,
+    decision === 'approve'
       ? 'Your claim has been approved! Please go to the Lost & Found office to collect your item.'
       : 'Your claim has been rejected. You may submit another claim or contact the finder.',
-    referenceId: claim.id,
-  });
+    claim.foundItemPostId,
+  );
 
   return toClaimResponse(updatedClaim ?? { ...claim, status });
 };
