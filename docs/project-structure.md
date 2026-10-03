@@ -35,6 +35,22 @@ npm run contract:emit
 npx tsc --noEmit
 ```
 
+## Cloudinary Structure 
+
+                Shared
+                  │
+        ┌─────────▼─────────┐
+        │ Cloudinary Service │
+        │   uploadImage()    │
+        └─────────┬─────────┘
+                  │
+       ┌──────────┼──────────┐
+       ▼          ▼          ▼
+   User Dev   Product Dev  Banner Dev
+       │          │          │
+    profile     product     banner
+     image       image       image
+
 ### with Docker (Optional No need to run, You can start with yarn dev to start the project)
 
 Requirements: Docker Desktop must be running and `.env` must exist.
