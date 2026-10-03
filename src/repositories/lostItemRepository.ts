@@ -63,6 +63,14 @@ const updateLostItem = async (id: string, data: UpdateLostItemPayload): Promise<
   await db.orm.public.LostItemPost.where({ id: lostItemId }).update(data);
 };
 
+const deleteLostItem = async (id: string): Promise<void> => {
+  const lostItemId = id as NonNullable<
+    Awaited<ReturnType<typeof db.orm.public.LostItemPost.first>>
+  >['id'];
+
+  await db.orm.public.LostItemPost.where({ id: lostItemId }).delete();
+};
+
 const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost> => {
   const result = await db.orm.public.LostItemPost.create({
     title: data.title,
@@ -90,4 +98,11 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
   };
 };
 
-export { createLostItem, findAllLostItems, findLostItemById, updateLostItem, updateLostItemStatus };
+export {
+  createLostItem,
+  deleteLostItem,
+  findAllLostItems,
+  findLostItemById,
+  updateLostItem,
+  updateLostItemStatus,
+};
