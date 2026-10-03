@@ -25,6 +25,8 @@ const secureRoute = (req: Request, _res: Response, next: NextFunction) => {
 			return next(new AuthenticationError("Invalid access token"));
 		}
 
+		req.userId = payload.userId;
+
 		return next();
 	} catch {
 		return next(new AuthenticationError("Invalid or expired access token"));

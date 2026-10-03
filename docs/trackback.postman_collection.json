@@ -277,16 +277,302 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "lost-items",
+      "description": "Public list/detail requests and authenticated create/recover requests for LostItemPost.",
+      "item": [
+        {
+          "name": "list lost items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/lost-items?page=1&limit=10&status=OPEN"
+          }
+        },
+        {
+          "name": "get lost item by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/lost-items/{{lostItemId}}"
+          }
+        },
+        {
+          "name": "create lost item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black wallet\",\n  \"description\": \"Black leather wallet found near the library.\",\n  \"category\": \"wallet\",\n  \"lastSeenLocation\": \"Central Library\",\n  \"lastSeenDate\": \"2026-10-03\",\n  \"photoUrl\": \"https://example.com/wallet.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/lost-items"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('lostItemId', pm.response.json().data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "recover lost item",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{apiBase}}/lost-items/{{lostItemId}}/recover"
+          }
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "description": "Login as a user who has received a claim notification, then list notifications before marking one or all as read.",
+      "item": [
+        {
+          "name": "list my notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/notifications?page=1&limit=20"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const items = pm.response.json().items || [];",
+                  "if (items.length > 0) {",
+                  "    pm.collectionVariables.set('notificationId', items[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "mark notification as read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/notifications/{{notificationId}}/read"
+          }
+        },
+        {
+          "name": "mark all notifications as read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/notifications/read-all"
+          }
+        }
+      ]
+    },
+    {
+      "name": "claims",
+      "description": "Set foundItemPostId to an existing Post table ID before submitting a claim. The HTTP-only token cookie is stored by Postman's cookie jar after login.",
+      "item": [
+        {
+          "name": "login claimant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{claimantEmail}}\",\n  \"password\": \"Password@123\",\n  \"rememberMe\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/auth/login"
+          }
+        },
+        {
+          "name": "login finder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{finderEmail}}\",\n  \"password\": \"Password@123\",\n  \"rememberMe\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/auth/login"
+          }
+        },
+        {
+          "name": "submit claim as claimant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"justification\": \"The initials and unique scratch on the item match mine.\",\n  \"itemDetails\": \"Black wallet with student card and three bank cards.\",\n  \"proofPhotoUrl\": \"https://example.com/proof.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/api/v1/found-items/{{foundItemPostId}}/claims"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('claimId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "list my claims",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/claims?role=mine&page=1&limit=20"
+          }
+        },
+        {
+          "name": "get claim detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/claims/{{claimId}}"
+          }
+        },
+        {
+          "name": "list claims to review as finder",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/api/v1/claims?role=toReview&status=PENDING&page=1&limit=20"
+          }
+        },
+        {
+          "name": "approve claim as finder",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"approve\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/api/v1/claims/{{claimId}}/review"
+          }
+        },
+        {
+          "name": "reject claim as finder",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"reject\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/api/v1/claims/{{claimId}}/review"
+          }
+        }
+      ]
     }
   ],
   "variable": [
     {
       "key": "apiBase",
-      "value": ""
+      "value": "http://localhost:8080"
     },
     {
       "key": "json_web_token_1832",
       "secret": true
+    },
+    {
+      "key": "claimantEmail",
+      "value": "claimant@example.com"
+    },
+    {
+      "key": "finderEmail",
+      "value": "finder@example.com"
+    },
+    {
+      "key": "foundItemPostId",
+      "value": "01a10126-9a4f-7616-bb27-a5e4508f5944"
+    },
+    {
+      "key": "claimId",
+      "value": ""
+    },
+    {
+      "key": "lostItemId",
+      "value": ""
+    },
+    {
+      "key": "notificationId",
+      "value": ""
     }
   ]
 }
