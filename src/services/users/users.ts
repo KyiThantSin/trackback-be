@@ -1,6 +1,6 @@
 import type { UpdateUserPayload, User } from '@/types/user';
 import * as userRepository from '@/repositories/userRepository';
-import { ConflictError, NotFoundError } from '@/utils/errors';
+import { ConflictError, NotFoundError } from '@/errors/http-errors';
 import bcrypt from 'bcrypt';
 
 const getUser = async (userId: string): Promise<User> => {

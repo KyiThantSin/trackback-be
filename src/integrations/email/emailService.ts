@@ -1,7 +1,7 @@
 import "dotenv/config";
 import nodemailer from "nodemailer";
 import type { EmailTemplatePayLoad } from "@/types/email";
-import emailTemplates from "@/utils/emailTemplates";
+import emailTemplates from "@/integrations/email/emailTemplates";
 
 const smtpPort = Number(process.env.SMTP_PORT || 587);
 

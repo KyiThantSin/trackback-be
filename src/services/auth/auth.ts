@@ -1,9 +1,9 @@
 import type { LoginPayload, RegisterPayload, User } from "@/types/user";
 import * as userRespository from "@/repositories/userRepository";
-import { AuthenticationError, ConflictError, NotFoundError } from "@/utils/errors";
+import { AuthenticationError, ConflictError, NotFoundError } from "@/errors/http-errors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import sendEmail from "@/utils/sendEmail";
+import sendEmail from "@/integrations/email/emailService";
 
 const login = async (payload: LoginPayload) => {
   const user = await userRespository.findByEmail(payload.email);

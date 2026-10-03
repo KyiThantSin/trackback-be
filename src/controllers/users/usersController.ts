@@ -1,4 +1,4 @@
-import { BadRequestError } from "@/utils/errors";
+import { BadRequestError } from "@/errors/http-errors";
 import { type NextFunction, type Request, type Response } from "express";
 import * as userService from "@/services/users/users";
 
