@@ -10,6 +10,15 @@ export interface CreateLostItemPayload {
   userId: string;
 }
 
+export interface UpdateLostItemPayload {
+  title?: string;
+  description?: string;
+  category?: string;
+  lastSeenLocation?: string;
+  lastSeenDate?: string;
+  photoUrl?: string | null;
+}
+
 export interface ListLostItemsQuery {
   keyword?: string;
   category?: string;
