@@ -63,6 +63,20 @@ const updateLostItem = async (
   return updatedLostItem;
 };
 
+const deleteLostItem = async (id: string, userId: string): Promise<{ success: true }> => {
+  const lostItem = await lostItemRepository.findLostItemById(id);
+
+  if (!lostItem) {
+    throw new NotFoundError('Lost item not found');
+  }
+  if (lostItem.userId !== userId) {
+    throw new ForbiddenError('You do not own this lost item');
+  }
+
+  await lostItemRepository.deleteLostItem(id);
+  return { success: true };
+};
+
 const getLostItemById = async (id: string): Promise<LostItemPost> => {
   const lostItem = await lostItemRepository.findLostItemById(id);
 
@@ -117,4 +131,11 @@ const createLostItem = async (data: CreateLostItemPayload): Promise<LostItemPost
   });
 };
 
-export { createLostItem, getLostItemById, listLostItems, recoverLostItem, updateLostItem };
+export {
+  createLostItem,
+  deleteLostItem,
+  getLostItemById,
+  listLostItems,
+  recoverLostItem,
+  updateLostItem,
+};
