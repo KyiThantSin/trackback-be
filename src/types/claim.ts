@@ -43,10 +43,10 @@ export interface ClaimDetailResponse {
   foundItem: {
     id: string;
     title: string;
-    category: string | null;
-    description: string | null;
-    foundLocation: string | null;
-    foundDate: string | null;
+    category: string;
+    description: string;
+    foundLocation: string;
+    foundDate: string;
     photoUrl: string | null;
   };
   createdAt: string;

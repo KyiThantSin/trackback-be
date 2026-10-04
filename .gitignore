@@ -35,6 +35,7 @@ coverage/
 Thumbs.db
 .vscode/
 .idea/
+.claude/
 
 # Docker local artifacts
 .docker/

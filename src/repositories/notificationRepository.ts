@@ -8,14 +8,14 @@ export const create = (data: {
   id: string;
   userId: string;
   message: string;
-  relatedPostId?: string;
+  relatedItemId?: string;
 }) => db.orm.public.Notification.create({
   id: asNotificationId(data.id),
   userId: data.userId as Models.public_Notification['userId'],
   message: data.message,
   isRead: false,
-  relatedPostId: data.relatedPostId
-    ? (data.relatedPostId as Models.public_Notification['relatedPostId'])
+  relatedItemId: data.relatedItemId
+    ? (data.relatedItemId as Models.public_Notification['relatedItemId'])
     : null,
 });
 
@@ -37,6 +37,17 @@ export const findByIdAndUser = (id: string, userId: string) =>
     id: id as NotificationId,
     userId: userId as Models.public_Notification['userId'],
   });
+
+export const findUnreadByUserRelatedItemAndMessage = (
+  userId: string,
+  relatedItemId: string,
+  message: string,
+) => db.orm.public.Notification.first({
+  userId: userId as Models.public_Notification['userId'],
+  relatedItemId: relatedItemId as Models.public_Notification['relatedItemId'],
+  message,
+  isRead: false,
+});
 
 export const findById = (id: string) =>
   db.orm.public.Notification.first({ id: id as NotificationId });

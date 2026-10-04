@@ -340,6 +340,153 @@
             "header": [],
             "url": "{{apiBase}}/lost-items/{{lostItemId}}/recover"
           }
+        },
+        {
+          "name": "update lost item",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black wallet\",\n  \"description\": \"Updated: black leather wallet lost near the library entrance.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/lost-items/{{lostItemId}}"
+          }
+        },
+        {
+          "name": "delete lost item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{apiBase}}/lost-items/{{lostItemId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "found-items",
+      "description": "Authenticated list/detail/create/update/delete requests for FoundItemPost.",
+      "item": [
+        {
+          "name": "list found items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/found-items?page=1&limit=10&status=OPEN"
+          }
+        },
+        {
+          "name": "get found item by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/found-items/{{foundItemPostId}}"
+          }
+        },
+        {
+          "name": "create found item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black wallet\",\n  \"description\": \"Black leather wallet found near the library.\",\n  \"category\": \"wallet\",\n  \"foundLocation\": \"Central Library\",\n  \"foundDate\": \"2026-10-03T09:00:00Z\",\n  \"photoUrl\": \"https://example.com/wallet.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/found-items"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('foundItemPostId', pm.response.json().data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "update found item",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black leather wallet\",\n  \"description\": \"Updated: black leather wallet with a small scratch.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/found-items/{{foundItemPostId}}"
+          }
+        },
+        {
+          "name": "delete found item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{apiBase}}/found-items/{{foundItemPostId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "matching",
+      "description": "Owner-protected match lookup endpoints and the authenticated manual matching trigger.",
+      "item": [
+        {
+          "name": "run matching for item",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{apiBase}}/matching/run/{{foundItemPostId}}"
+          }
+        },
+        {
+          "name": "get matches for lost item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/lost-items/{{lostItemId}}/matches"
+          }
+        },
+        {
+          "name": "get matches for found item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{apiBase}}/found-items/{{foundItemPostId}}/matches"
+          }
         }
       ]
     },
@@ -352,7 +499,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{apiBase}}/api/v1/notifications?page=1&limit=20"
+            "url": "{{apiBase}}/notifications?page=1&limit=20"
           },
           "event": [
             {
@@ -374,7 +521,7 @@
           "request": {
             "method": "PATCH",
             "header": [],
-            "url": "{{apiBase}}/api/v1/notifications/{{notificationId}}/read"
+            "url": "{{apiBase}}/notifications/{{notificationId}}/read"
           }
         },
         {
@@ -382,14 +529,14 @@
           "request": {
             "method": "PATCH",
             "header": [],
-            "url": "{{apiBase}}/api/v1/notifications/read-all"
+            "url": "{{apiBase}}/notifications/read-all"
           }
         }
       ]
     },
     {
       "name": "claims",
-      "description": "Set foundItemPostId to an existing Post table ID before submitting a claim. The HTTP-only token cookie is stored by Postman's cookie jar after login.",
+      "description": "Set foundItemPostId to an existing found item ID before submitting a claim. The HTTP-only token cookie is stored by Postman's cookie jar after login.",
       "item": [
         {
           "name": "login claimant",
@@ -436,7 +583,76 @@
           }
         },
         {
+          "name": "send claim invite as finder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lostItemId\": \"{{lostItemId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/found-items/{{foundItemPostId}}/claim-invites"
+          }
+        },
+        {
           "name": "submit claim as claimant",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "justification",
+                  "value": "The initials and unique scratch on the item match mine.",
+                  "type": "text"
+                },
+                {
+                  "key": "itemDetails",
+                  "value": "Black wallet with student card and three bank cards.",
+                  "type": "text"
+                },
+                {
+                  "key": "proofPhotoUrl",
+                  "value": "https://example.com/proof.jpg",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "proofPhoto",
+                  "type": "file",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": "{{apiBase}}/found-items/{{foundItemPostId}}/claims"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('claimId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "submit claim as claimant (JSON)",
           "request": {
             "method": "POST",
             "header": [
@@ -454,7 +670,7 @@
                 }
               }
             },
-            "url": "{{apiBase}}/api/v1/found-items/{{foundItemPostId}}/claims"
+            "url": "{{apiBase}}/found-items/{{foundItemPostId}}/claims"
           },
           "event": [
             {
@@ -475,7 +691,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{apiBase}}/api/v1/claims?role=mine&page=1&limit=20"
+            "url": "{{apiBase}}/claims?role=mine&page=1&limit=20"
           }
         },
         {
@@ -483,7 +699,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{apiBase}}/api/v1/claims/{{claimId}}"
+            "url": "{{apiBase}}/claims/{{claimId}}"
           }
         },
         {
@@ -491,7 +707,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{apiBase}}/api/v1/claims?role=toReview&status=PENDING&page=1&limit=20"
+            "url": "{{apiBase}}/claims?role=toReview&status=PENDING&page=1&limit=20"
           }
         },
         {
@@ -513,7 +729,7 @@
                 }
               }
             },
-            "url": "{{apiBase}}/api/v1/claims/{{claimId}}/review"
+            "url": "{{apiBase}}/claims/{{claimId}}/review"
           }
         },
         {
@@ -535,7 +751,7 @@
                 }
               }
             },
-            "url": "{{apiBase}}/api/v1/claims/{{claimId}}/review"
+            "url": "{{apiBase}}/claims/{{claimId}}/review"
           }
         }
       ]

@@ -6,10 +6,11 @@ import type {
   UpdateFoundItemPayload,
 } from '@/types/foundItem';
 import * as foundItemRepository from '@/repositories/foundItemRepository';
+import * as matchingService from '@/services/matching/matching';
 import { ForbiddenError, NotFoundError } from '@/errors/http-errors';
 
 const createFoundItem = async (data: CreateFoundItemPayload): Promise<FoundItemPost> => {
-  return foundItemRepository.createFoundItem({
+  const foundItem = await foundItemRepository.createFoundItem({
     title: data.title.trim(),
     description: data.description.trim(),
     category: data.category.trim(),
@@ -18,6 +19,10 @@ const createFoundItem = async (data: CreateFoundItemPayload): Promise<FoundItemP
     photoUrl: typeof data.photoUrl === 'string' ? data.photoUrl.trim() : data.photoUrl,
     userId: data.userId,
   });
+
+  await matchingService.runMatching(foundItem.id, data.userId);
+
+  return foundItem;
 };
 
 const listFoundItems = async (query: ListFoundItemsQuery): Promise<ListFoundItemsResult> => {

@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import * as claimService from '@/services/claims/claims';
+import * as cloudinaryService from '@/integrations/cloudinary/cloudinaryService';
+import { CLOUDINARY_FOLDERS } from '@/integrations/cloudinary/cloudinaryFolders';
 import type { ClaimRole, ClaimStatus, ReviewDecision } from '@/types/claim';
 import { BadRequestError, AuthenticationError } from '@/errors/http-errors';
 
@@ -37,24 +39,40 @@ const parsePositiveInt = (value: unknown, name: string, fallback: number, max?: 
 const submitClaim = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const foundItemPostId = pathParam(req.params.id, 'Found item post ID');
-    const { justification, itemDetails, proofPhotoUrl } = req.body ?? {};
+    const { justification, itemDetails } = req.body ?? {};
+    const proofPhotoUrlField = req.body?.proofPhotoUrl;
     if (typeof justification !== 'string' || !justification.trim()) {
       throw new BadRequestError('Justification is required');
     }
     if (typeof itemDetails !== 'string' || !itemDetails.trim()) {
       throw new BadRequestError('Item details are required');
     }
-    if (proofPhotoUrl !== undefined && typeof proofPhotoUrl !== 'string') {
-      throw new BadRequestError('proofPhotoUrl must be a URL');
-    }
-    if (proofPhotoUrl) {
-      try {
-        new URL(proofPhotoUrl);
-      } catch {
-        if (!proofPhotoUrl.startsWith('/uploads/')) {
-          throw new BadRequestError('proofPhotoUrl must be a valid URL');
+
+    // A proofPhoto file wins over the proofPhotoUrl field.
+    let proofPhotoUrl: string | undefined;
+    if (req.file) {
+      if (req.file.size === 0) {
+        throw new BadRequestError('Proof photo file must not be empty');
+      }
+      const uploaded = await cloudinaryService.uploadImage(
+        req.file.buffer,
+        CLOUDINARY_FOLDERS.CLAIM_PROOF,
+      );
+      proofPhotoUrl = uploaded.url;
+    } else if (proofPhotoUrlField !== undefined) {
+      if (typeof proofPhotoUrlField !== 'string') {
+        throw new BadRequestError('proofPhotoUrl must be a URL');
+      }
+      if (proofPhotoUrlField) {
+        try {
+          new URL(proofPhotoUrlField);
+        } catch {
+          if (!proofPhotoUrlField.startsWith('/uploads/')) {
+            throw new BadRequestError('proofPhotoUrl must be a valid URL');
+          }
         }
       }
+      proofPhotoUrl = proofPhotoUrlField || undefined;
     }
 
     const claim = await claimService.submitClaim(
@@ -62,7 +80,22 @@ const submitClaim = async (req: Request, res: Response, next: NextFunction) => {
       { justification, itemDetails, proofPhotoUrl },
       currentUserId(req),
     );
-    return res.status(201).location(`/api/v1/claims/${claim.id}`).json(claim);
+    return res.status(201).location(`/claims/${claim.id}`).json(claim);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const sendClaimInvite = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const foundItemPostId = pathParam(req.params.id, 'Found item post ID');
+    const { lostItemId } = req.body ?? {};
+    if (typeof lostItemId !== 'string' || !lostItemId.trim()) {
+      throw new BadRequestError('lostItemId is required');
+    }
+
+    await claimService.sendClaimInvite(foundItemPostId, lostItemId.trim(), currentUserId(req));
+    return res.status(201).json({ message: 'Claim invite sent' });
   } catch (error) {
     return next(error);
   }
@@ -112,4 +145,4 @@ const reviewClaim = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { getClaimById, getClaims, reviewClaim, submitClaim };
+export { getClaimById, getClaims, reviewClaim, sendClaimInvite, submitClaim };
