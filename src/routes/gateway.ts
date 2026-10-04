@@ -7,6 +7,7 @@ import lostItemsRouter from '@/routes/lost-items/lostItems';
 import notificationsRouter from '@/routes/notifications/notifications';
 import mediaRouter from '@/routes/media/media';
 import matchingRouter from '@/routes/matching/matching';
+import browseItemRouter from '@/routes/browse/browseItems';
 
 const gateway = Router();
 
@@ -18,5 +19,6 @@ gateway.use('/lost-items', lostItemsRouter);
 gateway.use('/', notificationsRouter);
 gateway.use('/media', mediaRouter);
 gateway.use('/', matchingRouter);
+gateway.use('/items', browseItemRouter);
 
 export default gateway;
