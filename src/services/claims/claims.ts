@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 import * as claimRepository from '@/repositories/claimRepository';
 import * as notificationService from '@/services/notifications/notifications';
 import * as foundItemRepository from '@/repositories/foundItemRepository';
+import * as lostItemRepository from '@/repositories/lostItemRepository';
+import * as notificationRepository from '@/repositories/notificationRepository';
 import * as userRepository from '@/repositories/userRepository';
 import type {
   ClaimDetailResponse,
@@ -174,4 +176,46 @@ const reviewClaim = async (id: string, decision: ReviewDecision, userId: string)
   return toClaimResponse(updatedClaim ?? { ...claim, status });
 };
 
-export { getClaimById, getClaims, reviewClaim, submitClaim };
+const sendClaimInvite = async (
+  foundItemPostId: string,
+  lostItemId: string,
+  finderUserId: string,
+): Promise<void> => {
+  const finder = await userRepository.findById(finderUserId);
+  if (!finder) {
+    throw new NotFoundError('User not found');
+  }
+
+  const foundItem = await foundItemRepository.findFoundItemById(foundItemPostId);
+  if (!foundItem) {
+    throw new ClaimError(404, 'FOUND_POST_NOT_FOUND', 'Found item post not found');
+  }
+  if (foundItem.userId !== finderUserId) {
+    throw new ClaimError(403, 'NOT_FOUND_ITEM_OWNER', 'Only the finder of this item can send claim invites');
+  }
+  if (foundItem.status !== 'OPEN') {
+    throw new ClaimError(409, 'POST_ALREADY_CLAIMED', 'This post is no longer available for claiming');
+  }
+
+  const lostItem = await lostItemRepository.findLostItemById(lostItemId);
+  if (!lostItem) {
+    throw new ClaimError(404, 'LOST_POST_NOT_FOUND', 'Lost item post not found');
+  }
+  if (lostItem.status !== 'OPEN') {
+    throw new ClaimError(409, 'LOST_POST_NOT_OPEN', 'This lost item post is no longer open');
+  }
+  if (lostItem.userId === finderUserId) {
+    throw new ClaimError(403, 'CANNOT_INVITE_OWN_LOST_POST', 'You cannot send a claim invite for your own lost item post');
+  }
+
+  const message = `${finder.name} believes they found your item "${lostItem.title}". Submit a claim for "${foundItem.title}" to confirm it's yours.`;
+  const existingInvite = await notificationRepository
+    .findUnreadByUserRelatedItemAndMessage(lostItem.userId, foundItemPostId, message);
+  if (existingInvite) {
+    throw new ClaimError(409, 'CLAIM_INVITE_ALREADY_SENT', 'You have already invited this user to claim this found item');
+  }
+
+  await notificationService.notifyUser(lostItem.userId, message, foundItemPostId);
+};
+
+export { getClaimById, getClaims, reviewClaim, sendClaimInvite, submitClaim };

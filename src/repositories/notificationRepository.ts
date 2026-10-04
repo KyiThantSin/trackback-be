@@ -38,6 +38,17 @@ export const findByIdAndUser = (id: string, userId: string) =>
     userId: userId as Models.public_Notification['userId'],
   });
 
+export const findUnreadByUserRelatedItemAndMessage = (
+  userId: string,
+  relatedItemId: string,
+  message: string,
+) => db.orm.public.Notification.first({
+  userId: userId as Models.public_Notification['userId'],
+  relatedItemId: relatedItemId as Models.public_Notification['relatedItemId'],
+  message,
+  isRead: false,
+});
+
 export const findById = (id: string) =>
   db.orm.public.Notification.first({ id: id as NotificationId });
 

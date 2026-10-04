@@ -466,7 +466,76 @@
           }
         },
         {
+          "name": "send claim invite as finder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lostItemId\": \"{{lostItemId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{apiBase}}/api/v1/found-items/{{foundItemPostId}}/claim-invites"
+          }
+        },
+        {
           "name": "submit claim as claimant",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "justification",
+                  "value": "The initials and unique scratch on the item match mine.",
+                  "type": "text"
+                },
+                {
+                  "key": "itemDetails",
+                  "value": "Black wallet with student card and three bank cards.",
+                  "type": "text"
+                },
+                {
+                  "key": "proofPhotoUrl",
+                  "value": "https://example.com/proof.jpg",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "proofPhoto",
+                  "type": "file",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": "{{apiBase}}/api/v1/found-items/{{foundItemPostId}}/claims"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set('claimId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "submit claim as claimant (JSON)",
           "request": {
             "method": "POST",
             "header": [
