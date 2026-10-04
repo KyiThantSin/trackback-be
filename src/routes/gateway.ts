@@ -12,10 +12,10 @@ const gateway = Router();
 
 gateway.use('/auth', authRouter);
 gateway.use('/users', userRouter);
-gateway.use('/api/v1', claimsRouter);
+gateway.use('/', claimsRouter);
 gateway.use('/found-items', foundItemsRouter);
 gateway.use('/lost-items', lostItemsRouter);
-gateway.use('/api/v1', notificationsRouter);
+gateway.use('/', notificationsRouter);
 gateway.use('/media', mediaRouter);
 gateway.use('/', matchingRouter);
 

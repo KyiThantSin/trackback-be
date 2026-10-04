@@ -80,7 +80,7 @@ const submitClaim = async (req: Request, res: Response, next: NextFunction) => {
       { justification, itemDetails, proofPhotoUrl },
       currentUserId(req),
     );
-    return res.status(201).location(`/api/v1/claims/${claim.id}`).json(claim);
+    return res.status(201).location(`/claims/${claim.id}`).json(claim);
   } catch (error) {
     return next(error);
   }
