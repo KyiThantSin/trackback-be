@@ -36,15 +36,6 @@ export const updateStatus = (id: string, status: ClaimStatus) =>
     updatedAt: new Date().toISOString(),
   });
 
-export const findByClaimant = (claimantUserId: string) =>
-  db.orm.public.Claim.where({ claimantUserId: asClaimId(claimantUserId) });
-
-export const findByPost = (foundItemPostId: string) =>
-  db.orm.public.Claim.where({ foundItemPostId: asClaimId(foundItemPostId) });
-
-export const findByPostAndStatus = (foundItemPostId: string, status: ClaimStatus) =>
-  db.orm.public.Claim.where({ foundItemPostId: asClaimId(foundItemPostId), status });
-
 export const findMine = (
   claimantUserId: string,
   status: ClaimStatus | undefined,
@@ -68,7 +59,7 @@ export const findToReview = (
   limit: number,
 ) => {
   const query = db.orm.public.Claim
-    .where((claim) => claim.foundItem.some((post) => post.authorId.eq(finderUserId as Models.public_Post['authorId'])));
+    .where((claim) => claim.foundItem.some((foundItem) => foundItem.userId.eq(finderUserId as Models.public_FoundItemPost['userId'])));
   const filtered = status ? query.where({ status }) : query;
 
   return filtered
@@ -86,7 +77,7 @@ export const countMine = (claimantUserId: string, status?: ClaimStatus) => {
 
 export const countToReview = (finderUserId: string, status?: ClaimStatus) => {
   const query = db.orm.public.Claim
-    .where((claim) => claim.foundItem.some((post) => post.authorId.eq(finderUserId as Models.public_Post['authorId'])));
+    .where((claim) => claim.foundItem.some((foundItem) => foundItem.userId.eq(finderUserId as Models.public_FoundItemPost['userId'])));
   return (status ? query.where({ status }) : query).aggregate((aggregate) => ({ total: aggregate.count() }));
 };
 

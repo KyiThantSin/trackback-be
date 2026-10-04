@@ -37,7 +37,7 @@ const getFoundItemMatches = async (req: Request, res: Response, next: NextFuncti
 const runMatching = async (req: Request, res: Response, next: NextFunction) => {
   try {
     return res.status(200).json(await matchingService.runMatching(
-      pathParam(req.params.postId, 'Post ID'),
+      pathParam(req.params.itemId, 'Item ID'),
       currentUserId(req),
     ));
   } catch (error) {

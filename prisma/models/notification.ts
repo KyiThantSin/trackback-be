@@ -16,7 +16,7 @@ export const defineNotificationModel = (
       userId: field.uuidString(),
       message: field.text(),
       isRead: field.boolean(),
-      relatedPostId: field.uuidString().optional(),
+      relatedItemId: field.uuidString().optional(),
       createdAt: field.temporal.createdAtString(),
     },
   });

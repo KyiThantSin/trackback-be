@@ -20,10 +20,6 @@
       "model": "Notification",
       "namespace": "public"
     },
-    "Post": {
-      "model": "Post",
-      "namespace": "public"
-    },
     "User": {
       "model": "User",
       "namespace": "public"
@@ -137,7 +133,7 @@
                   ]
                 },
                 "to": {
-                  "model": "Post",
+                  "model": "FoundItemPost",
                   "namespace": "public"
                 }
               }
@@ -497,7 +493,7 @@
                   "kind": "scalar"
                 }
               },
-              "relatedPostId": {
+              "relatedItemId": {
                 "nullable": true,
                 "type": {
                   "codecId": "sql/char@1",
@@ -550,8 +546,8 @@
                 "message": {
                   "column": "message"
                 },
-                "relatedPostId": {
-                  "column": "relatedPostId"
+                "relatedItemId": {
+                  "column": "relatedItemId"
                 },
                 "userId": {
                   "column": "userId"
@@ -559,178 +555,6 @@
               },
               "namespaceId": "public",
               "table": "Notification"
-            }
-          },
-          "Post": {
-            "fields": {
-              "authorId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "sql/char@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "length": 36
-                  }
-                }
-              },
-              "category": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "claimedById": {
-                "nullable": true,
-                "type": {
-                  "codecId": "sql/char@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "length": 36
-                  }
-                }
-              },
-              "content": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "foundDate": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "foundLocation": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "sql/char@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "length": 36
-                  }
-                }
-              },
-              "photoUrl": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "status": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "title": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "author": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "authorId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              },
-              "claims": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "foundItemPostId"
-                  ]
-                },
-                "to": {
-                  "model": "Claim",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "authorId": {
-                  "column": "authorId"
-                },
-                "category": {
-                  "column": "category"
-                },
-                "claimedById": {
-                  "column": "claimedById"
-                },
-                "content": {
-                  "column": "content"
-                },
-                "createdAt": {
-                  "column": "createdAt"
-                },
-                "foundDate": {
-                  "column": "foundDate"
-                },
-                "foundLocation": {
-                  "column": "foundLocation"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "photoUrl": {
-                  "column": "photoUrl"
-                },
-                "status": {
-                  "column": "status"
-                },
-                "title": {
-                  "column": "title"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
-                }
-              },
-              "namespaceId": "public",
-              "table": "Post"
             }
           },
           "User": {
@@ -853,21 +677,6 @@
                 },
                 "to": {
                   "model": "Notification",
-                  "namespace": "public"
-                }
-              },
-              "posts": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "authorId"
-                  ]
-                },
-                "to": {
-                  "model": "Post",
                   "namespace": "public"
                 }
               }
@@ -1149,7 +958,7 @@
                   "nativeType": "text",
                   "nullable": false
                 },
-                "relatedPostId": {
+                "relatedItemId": {
                   "codecId": "sql/char@1",
                   "nativeType": "character",
                   "nullable": true,
@@ -1164,87 +973,6 @@
                   "typeParams": {
                     "length": 36
                   }
-                }
-              },
-              "foreignKeys": [],
-              "indexes": [],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": []
-            },
-            "Post": {
-              "columns": {
-                "authorId": {
-                  "codecId": "sql/char@1",
-                  "nativeType": "character",
-                  "nullable": false,
-                  "typeParams": {
-                    "length": 36
-                  }
-                },
-                "category": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "claimedById": {
-                  "codecId": "sql/char@1",
-                  "nativeType": "character",
-                  "nullable": true,
-                  "typeParams": {
-                    "length": 36
-                  }
-                },
-                "content": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "foundDate": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": true
-                },
-                "foundLocation": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "id": {
-                  "codecId": "sql/char@1",
-                  "nativeType": "character",
-                  "nullable": false,
-                  "typeParams": {
-                    "length": 36
-                  }
-                },
-                "photoUrl": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "status": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "title": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
                 }
               },
               "foreignKeys": [],
@@ -1323,10 +1051,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e52af813cfb14dabccea6a5544aa1689d8393496d5357e5c3d37ce0944c06065"
+    "storageHash": "3a78d7732672f8d3b460a639cff2796c0f94c2f5f0b2cc93d983e2a2541c5387"
   },
   "execution": {
-    "executionHash": "d166c7b7ab102b7ca3040e3b5c21febe8eaea1f40c36ac40568c11d4d4195d82",
+    "executionHash": "cbee0bb80e32db881dff414aa96c95b90ddff2cf91b468d0b606fc8831a02276",
     "mutations": {
       "defaults": [
         {
@@ -1460,43 +1188,6 @@
             "column": "id",
             "namespace": "public",
             "table": "Notification"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "createdAt",
-            "namespace": "public",
-            "table": "Post"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "uuidv7",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "id",
-            "namespace": "public",
-            "table": "Post"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "Post"
           }
         },
         {

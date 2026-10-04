@@ -32,14 +32,14 @@ const main = async () => {
     email: claimantEmail,
   });
 
-  const existingPost = await db.orm.public.Post.first({
+  const existingItem = await db.orm.public.FoundItemPost.first({
     title: postTitle,
-    authorId: finder.id,
+    userId: finder.id,
   });
-  const foundPost = existingPost ?? await db.orm.public.Post.create({
+  const foundItem = existingItem ?? await db.orm.public.FoundItemPost.create({
     title: postTitle,
-    content: 'Test wallet found near the library.',
-    authorId: finder.id as Models.public_Post['authorId'],
+    description: 'Test wallet found near the library.',
+    userId: finder.id as Models.public_FoundItemPost['userId'],
     category: 'wallet',
     foundLocation: 'Central Library',
     foundDate: '2026-10-03T09:00:00Z',
@@ -53,11 +53,11 @@ const main = async () => {
       finder: { email: finderEmail, userId: finder.id },
       claimant: { email: claimantEmail, userId: claimant.id },
     },
-    foundPost: {
-      id: foundPost.id,
-      title: foundPost.title,
-      authorId: foundPost.authorId,
-      status: foundPost.status,
+    foundItem: {
+      id: foundItem.id,
+      title: foundItem.title,
+      userId: foundItem.userId,
+      status: foundItem.status,
     },
   }, null, 2));
 };

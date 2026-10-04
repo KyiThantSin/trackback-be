@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import * as claimRepository from '@/repositories/claimRepository';
 import * as notificationService from '@/services/notifications/notifications';
-import * as postRepository from '@/repositories/postRepository';
+import * as foundItemRepository from '@/repositories/foundItemRepository';
 import * as userRepository from '@/repositories/userRepository';
 import type {
   ClaimDetailResponse,
@@ -46,14 +46,14 @@ const submitClaim = async (
     throw new NotFoundError('User not found');
   }
 
-  const foundItem = await postRepository.findById(foundItemPostId);
+  const foundItem = await foundItemRepository.findFoundItemById(foundItemPostId);
   if (!foundItem) {
     throw new ClaimError(404, 'FOUND_POST_NOT_FOUND', 'Found item post not found');
   }
   if (foundItem.status !== 'OPEN') {
     throw new ClaimError(409, 'POST_ALREADY_CLAIMED', 'This post is no longer available for claiming');
   }
-  if (foundItem.authorId === claimantUserId) {
+  if (foundItem.userId === claimantUserId) {
     throw new ClaimError(403, 'CANNOT_CLAIM_OWN_POST', 'You cannot claim an item you found');
   }
 
@@ -72,8 +72,10 @@ const submitClaim = async (
     claimantUserId,
   });
 
+  await foundItemRepository.updateFoundItemStatus(foundItemPostId, 'PENDING_CLAIM');
+
   await notificationService.notifyUser(
-    foundItem.authorId,
+    foundItem.userId,
     `${claimant.name} has submitted a claim for your found item`,
     foundItemPostId,
   );
@@ -106,7 +108,7 @@ const getClaimById = async (id: string, userId: string): Promise<ClaimDetailResp
     throw new ClaimError(404, 'CLAIM_NOT_FOUND', 'Claim not found');
   }
 
-  if (claim.claimant.id !== userId && claim.foundItem?.authorId !== userId) {
+  if (claim.claimant.id !== userId && claim.foundItem?.userId !== userId) {
     throw new ForbiddenError('You are not authorized to view this claim');
   }
   if (!claim.foundItem) {
@@ -126,7 +128,7 @@ const getClaimById = async (id: string, userId: string): Promise<ClaimDetailResp
       id: claim.foundItem.id,
       title: claim.foundItem.title,
       category: claim.foundItem.category,
-      description: claim.foundItem.content,
+      description: claim.foundItem.description,
       foundLocation: claim.foundItem.foundLocation,
       foundDate: claim.foundItem.foundDate,
       photoUrl: claim.foundItem.photoUrl,
@@ -142,26 +144,24 @@ const reviewClaim = async (id: string, decision: ReviewDecision, userId: string)
     throw new ClaimError(404, 'CLAIM_NOT_FOUND', 'Claim not found');
   }
 
-  const foundItem = await postRepository.findById(claim.foundItemPostId);
-  if (!foundItem || foundItem.authorId !== userId) {
+  const foundItem = await foundItemRepository.findFoundItemById(claim.foundItemPostId);
+  if (!foundItem || foundItem.userId !== userId) {
     throw new ForbiddenError('Only the finder can review this claim');
   }
   if (claim.status !== 'PENDING') {
     throw new ClaimError(409, 'CLAIM_ALREADY_REVIEWED', 'This claim has already been reviewed');
   }
-  if (decision === 'approve' && foundItem.status !== 'OPEN') {
+  if (decision === 'approve' && foundItem.status !== 'OPEN' && foundItem.status !== 'PENDING_CLAIM') {
     throw new ClaimError(409, 'POST_ALREADY_CLAIMED', 'This post is no longer available for claiming');
   }
 
   const status: ClaimStatus = decision === 'approve' ? 'APPROVED' : 'REJECTED';
   const updatedClaim = await claimRepository.updateStatus(id, status);
 
-  if (decision === 'approve') {
-    await postRepository.update(claim.foundItemPostId, {
-      status: 'CLAIMED',
-      claimedById: claim.claimantUserId,
-    });
-  }
+  await foundItemRepository.updateFoundItemStatus(
+    claim.foundItemPostId,
+    decision === 'approve' ? 'CLAIMED' : 'OPEN',
+  );
 
   await notificationService.notifyUser(
     claim.claimantUserId,

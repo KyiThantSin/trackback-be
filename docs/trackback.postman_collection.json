@@ -348,7 +348,7 @@
       "description": "Owner-protected match lookup endpoints and the authenticated manual matching trigger.",
       "item": [
         {
-          "name": "run matching for found post",
+          "name": "run matching for item",
           "request": {
             "method": "POST",
             "header": [],
@@ -419,7 +419,7 @@
     },
     {
       "name": "claims",
-      "description": "Set foundItemPostId to an existing Post table ID before submitting a claim. The HTTP-only token cookie is stored by Postman's cookie jar after login.",
+      "description": "Set foundItemPostId to an existing found item ID before submitting a claim. The HTTP-only token cookie is stored by Postman's cookie jar after login.",
       "item": [
         {
           "name": "login claimant",

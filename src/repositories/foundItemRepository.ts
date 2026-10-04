@@ -2,6 +2,7 @@ import { db } from '@/../prisma/db';
 import type {
   CreateFoundItemPayload,
   FoundItemPost,
+  FoundItemStatus,
   UpdateFoundItemPayload,
 } from '@/types/foundItem';
 
@@ -81,6 +82,14 @@ const updateFoundItem = async (id: string, data: UpdateFoundItemPayload): Promis
   await db.orm.public.FoundItemPost.where({ id: foundItemId }).update(data);
 };
 
+const updateFoundItemStatus = async (id: string, status: FoundItemStatus): Promise<void> => {
+  const foundItemId = id as NonNullable<
+    Awaited<ReturnType<typeof db.orm.public.FoundItemPost.first>>
+  >['id'];
+
+  await db.orm.public.FoundItemPost.where({ id: foundItemId }).update({ status });
+};
+
 const deleteFoundItem = async (id: string): Promise<void> => {
   const foundItemId = id as NonNullable<
     Awaited<ReturnType<typeof db.orm.public.FoundItemPost.first>>
@@ -95,4 +104,5 @@ export {
   findAllFoundItems,
   findFoundItemById,
   updateFoundItem,
+  updateFoundItemStatus,
 };

@@ -9,15 +9,15 @@ const toNotificationResponse = (notification: NotificationResponse): Notificatio
   isRead: notification.isRead,
   createdAt: notification.createdAt,
   userId: notification.userId,
-  relatedPostId: notification.relatedPostId,
+  relatedItemId: notification.relatedItemId,
 });
 
-const notifyUser = async (userId: string, message: string, relatedPostId?: string) =>
+const notifyUser = async (userId: string, message: string, relatedItemId?: string) =>
   notificationRepository.create({
     id: randomUUID(),
     userId,
     message,
-    relatedPostId,
+    relatedItemId,
   });
 
 const getUserNotifications = async (

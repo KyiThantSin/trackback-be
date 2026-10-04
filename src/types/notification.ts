@@ -4,7 +4,7 @@ export interface NotificationResponse {
   isRead: boolean;
   createdAt: string;
   userId: string;
-  relatedPostId: string | null;
+  relatedItemId: string | null;
 }
 
 export interface NotificationsListResponse {
