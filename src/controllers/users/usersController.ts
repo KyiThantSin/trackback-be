@@ -1,4 +1,4 @@
-import { BadRequestError } from "@/errors/http-errors";
+import { AuthenticationError, BadRequestError } from "@/errors/http-errors";
 import { type NextFunction, type Request, type Response } from "express";
 import * as userService from "@/services/users/users";
 
@@ -19,21 +19,23 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.params.id;
-    const { name, email, password } = req.body;
-
-    if (typeof userId !== "string" || userId.length === 0) {
-      throw new BadRequestError("User ID is required");
+    if (!req.userId) {
+      throw new AuthenticationError("Authentication required");
     }
 
-    if (name === undefined && email === undefined && password === undefined) {
+    if (
+      req.body.name === undefined &&
+      req.body.email === undefined &&
+      req.body.password === undefined 
+    ) {
       throw new BadRequestError("At least one valid user field is required");
     }
 
-    const response = await userService.updateUser(userId, {
-      name: name,
-      email: email?.trim(),
-      password,
+    const response = await userService.updateUser(req.userId, {
+      name: req.body.name,
+      email: req.body.email?.trim(),
+      password: req.body.password,
+      profileUrl: req.file?.buffer,
     });
 
     return res.status(200).json({ response, message: "Update Successfully" });

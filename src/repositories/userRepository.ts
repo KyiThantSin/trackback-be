@@ -36,6 +36,8 @@ const updateUser = async (data: {
         name?: string;
         email?: string;
         password?: string;
+        profileUrl?: string | null;
+        profilePublicId?: string | null;
     };
 }) => {
     return db.orm.public.User

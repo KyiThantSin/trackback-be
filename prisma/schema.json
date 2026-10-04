@@ -604,6 +604,20 @@
                   "kind": "scalar"
                 }
               },
+              "profilePublicId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "profileUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "role": {
                 "nullable": false,
                 "type": {
@@ -700,6 +714,12 @@
                 },
                 "password": {
                   "column": "password"
+                },
+                "profilePublicId": {
+                  "column": "profilePublicId"
+                },
+                "profileUrl": {
+                  "column": "profileUrl"
                 },
                 "role": {
                   "column": "role"
@@ -1019,6 +1039,16 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "profilePublicId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "profileUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "role": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -1051,7 +1081,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "3a78d7732672f8d3b460a639cff2796c0f94c2f5f0b2cc93d983e2a2541c5387"
+    "storageHash": "227f67dfb5e8be3a5dbebc1f364eeab36063c6208e25c526e8451b082c6097d6"
   },
   "execution": {
     "executionHash": "cbee0bb80e32db881dff414aa96c95b90ddff2cf91b468d0b606fc8831a02276",

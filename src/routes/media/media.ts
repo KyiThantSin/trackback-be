@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as uploadController from "@/controllers/upload/uploadController";
+import * as uploadController from "@/controllers/media/mediaController";
 import { secureRoute } from "@/middlewares/secure-route";
 import upload from "@/middlewares/upload";
 
