@@ -16,12 +16,15 @@ interface UpdateUserPayload{
     name?: string;
     email?: string;
     password?: string;
+    profileUrl?: string | Buffer | null;
 }
 
 interface User{
     id:string;
     name:string;
     email:string;
+    profileUrl?:string | null;
+    profilePublicId?:string | null;
     role: RoleType;
     createdAt:string;
     updatedAt:string;

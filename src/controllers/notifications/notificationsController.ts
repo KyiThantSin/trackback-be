@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import * as notificationService from '@/services/notifications/notifications';
-import { BadRequestError, AuthenticationError } from '@/utils/errors';
+import { BadRequestError, AuthenticationError } from '@/errors/http-errors';
 
 const currentUserId = (req: Request) => {
   if (!req.userId) {

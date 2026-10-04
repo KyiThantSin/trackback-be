@@ -1,6 +1,8 @@
 import type { UpdateUserPayload, User } from '@/types/user';
 import * as userRepository from '@/repositories/userRepository';
 import { ConflictError, NotFoundError } from '@/errors/http-errors';
+import * as cloudinaryService from '@/integrations/cloudinary/cloudinaryService';
+import { CLOUDINARY_FOLDERS } from '@/integrations/cloudinary/cloudinaryFolders';
 import bcrypt from 'bcrypt';
 
 const getUser = async (userId: string): Promise<User> => {
@@ -14,6 +16,8 @@ const getUser = async (userId: string): Promise<User> => {
 		id: user.id,
 		name: user.name,
 		email: user.email,
+		profileUrl: user.profileUrl,
+		profilePublicId: user.profilePublicId,
 		role: user.role as User["role"],
 		createdAt: user.createdAt,
 		updatedAt: user.updatedAt,
@@ -29,37 +33,65 @@ const updateUser = async (
 	const user = await userRepository.findById(userId);
 
 	if (!user) {
-		throw new NotFoundError('User not found');
+		throw new NotFoundError("User not found");
 	}
 
-	if (data.email && data.email !== user.email) { // check existing email
-		const userWithEmail = await userRepository.findByEmail(data.email);
+	// Check email
+	if (data.email && data.email !== user.email) {
+		const existingUser = await userRepository.findByEmail(data.email);
 
-		if (userWithEmail && userWithEmail.id !== user.id) {
-			throw new ConflictError('Email is already in use');
+		if (existingUser && existingUser.id !== userId) {
+			throw new ConflictError("Email is already in use");
 		}
 	}
 
-	const updates = {
-		...data,
-		password: data.password
-			? await bcrypt.hash(data.password, 10)
-			: undefined,
-	};
+	const updates: {
+		name?: string;
+		email?: string;
+		password?: string;
+		profileUrl?: string | null;
+		profilePublicId?: string | null;
+	} = {};
 
-	const updatedUser = await userRepository.updateUser({
+	if (data.name !== undefined) {
+		updates.name = data.name;
+	}
+
+	if (data.email !== undefined) {
+		updates.email = data.email;
+	}
+
+	if (data.password) {
+		updates.password = await bcrypt.hash(data.password, 10);
+	}
+
+	// New profile image
+	if (Buffer.isBuffer(data.profileUrl)) {
+		const uploaded = await cloudinaryService.uploadImage(
+			data.profileUrl,
+			CLOUDINARY_FOLDERS.USER_PROFILE,
+		);
+
+		updates.profileUrl = uploaded.url;
+		updates.profilePublicId = uploaded.publicId;
+	}
+
+	const updatedUser = (await userRepository.updateUser({
 		userId: user.id,
 		updates,
-	});
+	}))!;
 
-	if (!updatedUser) {
-		throw new NotFoundError('User not found');
+	// delete old photo
+	if (Buffer.isBuffer(data.profileUrl) && user.profilePublicId) {
+		await cloudinaryService.deleteImage(user.profilePublicId);
 	}
 
 	return {
 		id: updatedUser.id,
 		name: updatedUser.name,
 		email: updatedUser.email,
+		profileUrl: updatedUser.profileUrl,
+		profilePublicId: updatedUser.profilePublicId,
 		role: updatedUser.role as User["role"],
 		createdAt: updatedUser.createdAt,
 		updatedAt: updatedUser.updatedAt,
