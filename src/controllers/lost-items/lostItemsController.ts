@@ -186,6 +186,39 @@ const updateLostItem = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
+const deleteLostItem = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const itemId = req.params.id;
+    if (typeof itemId !== 'string' || itemId.length === 0) {
+      throw new BadRequestError('Lost item ID is required');
+    }
+
+    const token = req.cookies?.token;
+    const accessSecret = process.env.ACCESS_TOKEN_SECRET;
+
+    if (!token) {
+      throw new AuthenticationError('Authentication required');
+    }
+    if (!accessSecret) {
+      throw new Error('ACCESS_TOKEN_SECRET is not configured');
+    }
+
+    const payload = jwt.verify(token, accessSecret);
+    if (
+      typeof payload !== 'object' ||
+      typeof payload.userId !== 'string' ||
+      payload.userId.length === 0
+    ) {
+      throw new AuthenticationError('Invalid access token');
+    }
+
+    const response = await lostItemService.deleteLostItem(itemId, payload.userId);
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const createLostItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies?.token;
@@ -240,4 +273,11 @@ const createLostItem = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export { createLostItem, getLostItemById, getLostItems, recoverLostItem, updateLostItem };
+export {
+  createLostItem,
+  deleteLostItem,
+  getLostItemById,
+  getLostItems,
+  recoverLostItem,
+  updateLostItem,
+};
