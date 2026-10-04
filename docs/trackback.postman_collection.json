@@ -1147,6 +1147,35 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "browse-items",
+      "item": [
+        {
+          "name": "search items by query",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiBase}}/items/search?type=all",
+              "host": [
+                "{{apiBase}}"
+              ],
+              "path": [
+                "items",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "all"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
