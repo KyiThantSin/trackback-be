@@ -18,13 +18,13 @@ const getUser = async (userId: string): Promise<User> => {
 		email: user.email,
 		profileUrl: user.profileUrl,
 		profilePublicId: user.profilePublicId,
+		about: user.about,
 		role: user.role as User["role"],
 		createdAt: user.createdAt,
 		updatedAt: user.updatedAt,
 		deletedAt: user.deletedAt,
 	};
 };
-
 
 const updateUser = async (
 	userId: string,
@@ -49,6 +49,7 @@ const updateUser = async (
 		name?: string;
 		email?: string;
 		password?: string;
+		about?: string | null;
 		profileUrl?: string | null;
 		profilePublicId?: string | null;
 	} = {};
@@ -59,6 +60,10 @@ const updateUser = async (
 
 	if (data.email !== undefined) {
 		updates.email = data.email;
+	}
+
+	if (data.about !== undefined) {
+		updates.about = data.about;
 	}
 
 	if (data.password) {
@@ -92,6 +97,7 @@ const updateUser = async (
 		email: updatedUser.email,
 		profileUrl: updatedUser.profileUrl,
 		profilePublicId: updatedUser.profilePublicId,
+		about: updatedUser.about,
 		role: updatedUser.role as User["role"],
 		createdAt: updatedUser.createdAt,
 		updatedAt: updatedUser.updatedAt,
@@ -99,4 +105,4 @@ const updateUser = async (
 	};
 };
 
-export {getUser, updateUser}
+export { getUser, updateUser };

@@ -27,6 +27,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       req.body.name === undefined &&
       req.body.email === undefined &&
       req.body.password === undefined &&
+      req.body.about === undefined &&
       !req.file
     ) {
       throw new BadRequestError("At least one valid user field is required");
@@ -36,6 +37,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       name: req.body.name,
       email: req.body.email?.trim(),
       password: req.body.password,
+      about: req.body.about !== undefined ? req.body.about?.trim() : undefined,
       profileUrl: req.file?.buffer,
     });
 
