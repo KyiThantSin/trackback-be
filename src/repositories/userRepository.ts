@@ -3,11 +3,11 @@ import { db } from "@/../prisma/db";
 
 const findByEmail = async (email: string) => {
 	const result =  await db.orm.public.User.first({ email });
-    if(!result) return null
+    if(!result) return null;
     
     return {
         ...result
-    }
+    };
 };
 
 const findById = async (id: string) => {
@@ -20,12 +20,12 @@ const findById = async (id: string) => {
     };
 };
 
-
 const createUser = async (data: {
     name: string;
     email: string;
     password: string;
     role: string;
+    about?: string | null;
 }) => {
     return db.orm.public.User.create(data);
 };
@@ -36,6 +36,7 @@ const updateUser = async (data: {
         name?: string;
         email?: string;
         password?: string;
+        about?: string | null;
         profileUrl?: string | null;
         profilePublicId?: string | null;
     };

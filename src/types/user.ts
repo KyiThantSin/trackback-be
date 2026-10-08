@@ -1,34 +1,37 @@
-type RoleType = 'USER' | 'ADMIN'
-interface RegisterPayload{
+type RoleType = 'USER' | 'ADMIN';
+
+interface RegisterPayload {
     name: string;
     email: string;
     role: RoleType;
     password: string;
 }
 
-interface LoginPayload{
+interface LoginPayload {
     email: string;
     password: string;
     rememberMe?: boolean;
 }
 
-interface UpdateUserPayload{
+interface UpdateUserPayload {
     name?: string;
     email?: string;
     password?: string;
+    about?: string | null;
     profileUrl?: string | Buffer | null;
 }
 
-interface User{
-    id:string;
-    name:string;
-    email:string;
-    profileUrl?:string | null;
-    profilePublicId?:string | null;
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    profileUrl?: string | null;
+    profilePublicId?: string | null;
+    about?: string | null;
     role: RoleType;
-    createdAt:string;
-    updatedAt:string;
-    deletedAt:string | null;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
 }
 
 export type {
@@ -36,5 +39,5 @@ export type {
     LoginPayload,
     UpdateUserPayload,
     User,
-    RoleType
-}
+    RoleType,
+};

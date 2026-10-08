@@ -17,6 +17,7 @@ export const defineUserModel = (
       name: field.text(),
       profileUrl: field.text().optional(),
       profilePublicId: field.text().optional(),
+      about: field.text().optional(),
       password: field.text(),
       role: field.text(),
       createdAt: field.temporal.createdAtString(),

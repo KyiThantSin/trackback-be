@@ -4,7 +4,7 @@ import * as userService from "@/services/users/users";
 
 const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.id ?? req.userId;
 
     if (typeof userId !== "string" || userId.length === 0) {
       throw new BadRequestError("User ID is required");
@@ -26,7 +26,9 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     if (
       req.body.name === undefined &&
       req.body.email === undefined &&
-      req.body.password === undefined 
+      req.body.password === undefined &&
+      req.body.about === undefined &&
+      !req.file
     ) {
       throw new BadRequestError("At least one valid user field is required");
     }
@@ -35,6 +37,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       name: req.body.name,
       email: req.body.email?.trim(),
       password: req.body.password,
+      about: req.body.about !== undefined ? req.body.about?.trim() : undefined,
       profileUrl: req.file?.buffer,
     });
 

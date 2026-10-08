@@ -5,7 +5,8 @@ import upload from '@/middlewares/upload';
 
 const router = Router();
 
-router.get('/:id', secureRoute, userController.getUser)
-router.patch('/me', secureRoute, upload.single('profileUrl'), userController.updateUser)
+router.get('/me', secureRoute, userController.getUser);
+router.get('/:id', secureRoute, userController.getUser);
+router.patch('/me', secureRoute, upload.single('profileUrl'), userController.updateUser);
 
 export default router;
