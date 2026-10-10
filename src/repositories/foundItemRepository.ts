@@ -1,4 +1,5 @@
 import { db } from '@/../prisma/db';
+import type { Models } from '@/../prisma/schema.d';
 import type {
   CreateFoundItemPayload,
   FoundItemPost,
@@ -51,6 +52,36 @@ const findAllFoundItems = async (): Promise<FoundItemPost[]> => {
   }));
 };
 
+const findByUserId = async (userId: string, limit: number): Promise<FoundItemPost[]> => {
+  const results = await db.orm.public.FoundItemPost
+    .where({ userId: userId as Models.public_FoundItemPost['userId'] })
+    .orderBy((item) => item.createdAt.desc())
+    .limit(limit)
+    .all();
+
+  return results.map((result) => ({
+    id: result.id,
+    title: result.title,
+    description: result.description,
+    category: result.category,
+    foundLocation: result.foundLocation,
+    foundDate: result.foundDate,
+    status: result.status as FoundItemPost['status'],
+    photoUrl: result.photoUrl ?? null,
+    userId: result.userId,
+    createdAt: result.createdAt,
+    updatedAt: result.updatedAt,
+  }));
+};
+
+const countByUserId = async (userId: string): Promise<number> => {
+  const result = await db.orm.public.FoundItemPost
+    .where({ userId: userId as Models.public_FoundItemPost['userId'] })
+    .aggregate((aggregate) => ({ total: aggregate.count() }));
+
+  return result.total;
+};
+
 const findFoundItemById = async (id: string): Promise<FoundItemPost | null> => {
   const foundItemId = id as NonNullable<
     Awaited<ReturnType<typeof db.orm.public.FoundItemPost.first>>
@@ -101,7 +132,9 @@ const deleteFoundItem = async (id: string): Promise<void> => {
 export {
   createFoundItem,
   deleteFoundItem,
+  countByUserId,
   findAllFoundItems,
+  findByUserId,
   findFoundItemById,
   updateFoundItem,
   updateFoundItemStatus,

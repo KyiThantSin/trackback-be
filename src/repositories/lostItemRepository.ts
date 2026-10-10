@@ -1,4 +1,5 @@
 import { db } from '@/../prisma/db';
+import type { Models } from '@/../prisma/schema.d';
 import type {
   CreateLostItemPayload,
   LostItemPost,
@@ -22,6 +23,36 @@ const findAllLostItems = async (): Promise<LostItemPost[]> => {
     createdAt: result.createdAt,
     updatedAt: result.updatedAt,
   }));
+};
+
+const findByUserId = async (userId: string, limit: number): Promise<LostItemPost[]> => {
+  const results = await db.orm.public.LostItemPost
+    .where({ userId: userId as Models.public_LostItemPost['userId'] })
+    .orderBy((item) => item.createdAt.desc())
+    .limit(limit)
+    .all();
+
+  return results.map((result) => ({
+    id: result.id,
+    title: result.title,
+    description: result.description,
+    category: result.category,
+    lastSeenLocation: result.lastSeenLocation,
+    lastSeenDate: result.lastSeenDate,
+    status: result.status as LostItemPost['status'],
+    photoUrl: result.photoUrl ?? null,
+    userId: result.userId,
+    createdAt: result.createdAt,
+    updatedAt: result.updatedAt,
+  }));
+};
+
+const countByUserId = async (userId: string): Promise<number> => {
+  const result = await db.orm.public.LostItemPost
+    .where({ userId: userId as Models.public_LostItemPost['userId'] })
+    .aggregate((aggregate) => ({ total: aggregate.count() }));
+
+  return result.total;
 };
 
 const findLostItemById = async (id: string): Promise<LostItemPost | null> => {
@@ -102,7 +133,9 @@ export {
   createLostItem,
   deleteLostItem,
   findAllLostItems,
+  findByUserId,
   findLostItemById,
+  countByUserId,
   updateLostItem,
   updateLostItemStatus,
 };
