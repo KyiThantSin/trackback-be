@@ -10,6 +10,24 @@
       "name": "user",
       "item": [
         {
+          "name": "get current user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiBase}}/users/me",
+              "host": [
+                "{{apiBase}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "get user by ID",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
@@ -1169,6 +1187,38 @@
                 {
                   "key": "type",
                   "value": "all"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "my-posts",
+      "item": [
+        {
+          "name": "get my posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{apiBase}}/my-posts?page=1&limit=10",
+              "host": [
+                "{{apiBase}}"
+              ],
+              "path": [
+                "my-posts"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
                 }
               ]
             }
