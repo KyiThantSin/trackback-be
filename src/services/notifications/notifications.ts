@@ -25,9 +25,10 @@ const getUserNotifications = async (
   page: number,
   limit: number,
 ): Promise<NotificationsListResponse> => {
-  const [items, count] = await Promise.all([
+  const [items, count, unread] = await Promise.all([
     notificationRepository.findByUser(userId, page, limit),
     notificationRepository.countByUser(userId),
+    notificationRepository.countUnreadByUser(userId),
   ]);
 
   return {
@@ -35,6 +36,7 @@ const getUserNotifications = async (
     page,
     limit,
     total: count.total,
+    unreadCount: unread.total,
   };
 };
 

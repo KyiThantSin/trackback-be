@@ -32,6 +32,14 @@ export const countByUser = (userId: string) =>
     .where({ userId: userId as Models.public_Notification['userId'] })
     .aggregate((aggregate) => ({ total: aggregate.count() }));
 
+export const countUnreadByUser = (userId: string) =>
+  db.orm.public.Notification
+    .where({
+      userId: userId as Models.public_Notification['userId'],
+      isRead: false,
+    })
+    .aggregate((aggregate) => ({ total: aggregate.count() }));
+
 export const findByIdAndUser = (id: string, userId: string) =>
   db.orm.public.Notification.first({
     id: id as NotificationId,

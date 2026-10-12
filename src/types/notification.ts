@@ -12,4 +12,5 @@ export interface NotificationsListResponse {
   page: number;
   limit: number;
   total: number;
+  unreadCount: number;
 }
