@@ -1,8 +1,8 @@
 ## Project Structure
 
-- `src/routes` - Presentation layer; defines API endpoints and router composition.
-- `src/controllers` - Presentation layer; translates HTTP requests into application calls and formats responses.
-- `src/middlewares` - Presentation layer; handles request processing and cross-cutting checks such as authentication, uploads, and error handling.
+- `src/routes` - API/Interface layer; defines API endpoints and router composition.
+- `src/controllers` - API/Interface layer; translates HTTP requests into application calls and formats responses.
+- `src/middlewares` - API/Interface layer; handles request processing and cross-cutting checks such as auth and error handling.
 - `src/services` - Application layer; contains business rules and use cases.
 - `src/repositories` - Infrastructure layer; handles database access and persistence.
 - `src/integrations` - Infrastructure boundary for external providers such as Cloudinary and SMTP email.
