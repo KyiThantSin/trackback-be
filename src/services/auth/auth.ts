@@ -56,7 +56,7 @@ const register = async (data: RegisterPayload) => {
     name: data.name,
     email: data.email,
     password: await bcrypt.hash(data.password, 10),
-    role: data.role,
+    role: data.role ?? "user",
   });
 
   const userInfo: User = {
