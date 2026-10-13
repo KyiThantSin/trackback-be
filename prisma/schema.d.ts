@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d5a4c082d22f55a7125263406e028c867f2f521a6ec324961a932347617ed596'>;
+  StorageHashBase<'bce48d2ceedcfb380b6e26ae4121e22e8a1d1db1cb58a04c6b304de11f7abcd0'>;
 export type ExecutionHash =
   ExecutionHashBase<'cbee0bb80e32db881dff414aa96c95b90ddff2cf91b468d0b606fc8831a02276'>;
 export type ProfileHash =
@@ -293,6 +293,7 @@ export type FieldOutputTypes = {
       readonly isRead: CodecTypes['pg/bool@1']['output'];
       readonly message: CodecTypes['pg/text@1']['output'];
       readonly relatedItemId: Char<36> | null;
+      readonly relatedClaimId: Char<36> | null;
       readonly userId: Char<36>;
     };
     readonly User: {
@@ -355,6 +356,7 @@ export type FieldInputTypes = {
       readonly isRead: CodecTypes['pg/bool@1']['input'];
       readonly message: CodecTypes['pg/text@1']['input'];
       readonly relatedItemId: CodecTypes['sql/char@1']['input'] | null;
+      readonly relatedClaimId: CodecTypes['sql/char@1']['input'] | null;
       readonly userId: CodecTypes['sql/char@1']['input'];
     };
     readonly User: {
@@ -417,6 +419,7 @@ export type StorageColumnTypes = {
       readonly isRead: CodecTypes['pg/bool@1']['output'];
       readonly message: CodecTypes['pg/text@1']['output'];
       readonly relatedItemId: Char<36> | null;
+      readonly relatedClaimId: Char<36> | null;
       readonly userId: Char<36>;
     };
     readonly User: {
@@ -479,6 +482,7 @@ export type StorageColumnInputTypes = {
       readonly isRead: CodecTypes['pg/bool@1']['input'];
       readonly message: CodecTypes['pg/text@1']['input'];
       readonly relatedItemId: CodecTypes['sql/char@1']['input'] | null;
+      readonly relatedClaimId: CodecTypes['sql/char@1']['input'] | null;
       readonly userId: CodecTypes['sql/char@1']['input'];
     };
     readonly User: {
@@ -548,6 +552,7 @@ export namespace Models {
     isRead: CodecTypes['pg/bool@1']['output'];
     message: CodecTypes['pg/text@1']['output'];
     relatedItemId: Char<36> | null;
+    relatedClaimId: Char<36> | null;
     userId: Char<36>;
     user: public_User;
     readonly [RelationKeys]?: 'user';
@@ -810,6 +815,12 @@ type ContractBase = Omit<
                   readonly nullable: false;
                 };
                 readonly relatedItemId: {
+                  readonly nativeType: 'character';
+                  readonly codecId: 'sql/char@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly length: 36 };
+                };
+                readonly relatedClaimId: {
                   readonly nativeType: 'character';
                   readonly codecId: 'sql/char@1';
                   readonly nullable: true;
@@ -1233,6 +1244,14 @@ type ContractBase = Omit<
                   readonly typeParams: { readonly length: 36 };
                 };
               };
+              readonly relatedClaimId: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/char@1';
+                  readonly typeParams: { readonly length: 36 };
+                };
+              };
               readonly userId: {
                 readonly nullable: false;
                 readonly type: {
@@ -1262,6 +1281,7 @@ type ContractBase = Omit<
                 readonly isRead: { readonly column: 'isRead' };
                 readonly message: { readonly column: 'message' };
                 readonly relatedItemId: { readonly column: 'relatedItemId' };
+                readonly relatedClaimId: { readonly column: 'relatedClaimId' };
                 readonly userId: { readonly column: 'userId' };
               };
             };

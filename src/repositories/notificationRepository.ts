@@ -9,6 +9,7 @@ export const create = (data: {
   userId: string;
   message: string;
   relatedItemId?: string;
+  relatedClaimId?: string;
 }) => db.orm.public.Notification.create({
   id: asNotificationId(data.id),
   userId: data.userId as Models.public_Notification['userId'],
@@ -16,6 +17,9 @@ export const create = (data: {
   isRead: false,
   relatedItemId: data.relatedItemId
     ? (data.relatedItemId as Models.public_Notification['relatedItemId'])
+    : null,
+  relatedClaimId: data.relatedClaimId
+    ? (data.relatedClaimId as Models.public_Notification['relatedClaimId'])
     : null,
 });
 
