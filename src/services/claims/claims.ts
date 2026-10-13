@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import * as claimRepository from '@/repositories/claimRepository';
 import * as notificationService from '@/services/notifications/notifications';
+import * as matchingService from '@/services/matching/matching';
 import * as foundItemRepository from '@/repositories/foundItemRepository';
 import * as lostItemRepository from '@/repositories/lostItemRepository';
 import * as notificationRepository from '@/repositories/notificationRepository';
@@ -165,6 +166,18 @@ const reviewClaim = async (id: string, decision: ReviewDecision, userId: string)
     claim.foundItemPostId,
     decision === 'approve' ? 'CLAIMED' : 'OPEN',
   );
+
+  if (decision === 'approve') {
+    // Auto-recover the claimant's open lost-item posts that match this found
+    // item, so both sides of a successful match end up closed.
+    const relatedLostItems = await matchingService.findUserMatchesForFoundItem(
+      claim.foundItemPostId,
+      claim.claimantUserId,
+    );
+    await Promise.all(relatedLostItems.map((lostItem) =>
+      lostItemRepository.updateLostItemStatus(lostItem.id, 'RECOVERED'),
+    ));
+  }
 
   await notificationService.notifyUser(
     claim.claimantUserId,
