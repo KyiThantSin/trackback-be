@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.Notification.relatedClaimId",
+    "label": "Add column \"relatedClaimId\" to \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "relatedClaimId",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"relatedClaimId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "relatedClaimId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"relatedClaimId\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" ADD COLUMN \"relatedClaimId\" character(36)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"relatedClaimId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "relatedClaimId"
+        ]
+      }
+    ]
+  }
+]

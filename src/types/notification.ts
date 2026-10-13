@@ -5,6 +5,7 @@ export interface NotificationResponse {
   createdAt: string;
   userId: string;
   relatedItemId: string | null;
+  relatedClaimId: string | null;
 }
 
 export interface NotificationsListResponse {

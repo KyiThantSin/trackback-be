@@ -80,6 +80,7 @@ const submitClaim = async (
     foundItem.userId,
     `${claimant.name} has submitted a claim for your found item`,
     foundItemPostId,
+    claim.id,
   );
 
   return toClaimResponse(claim);
@@ -171,6 +172,7 @@ const reviewClaim = async (id: string, decision: ReviewDecision, userId: string)
       ? 'Your claim has been approved! Please go to the Lost & Found office to collect your item.'
       : 'Your claim has been rejected. You may submit another claim or contact the finder.',
     claim.foundItemPostId,
+    id,
   );
 
   return toClaimResponse(updatedClaim ?? { ...claim, status });

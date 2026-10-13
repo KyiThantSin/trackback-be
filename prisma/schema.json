@@ -493,6 +493,16 @@
                   "kind": "scalar"
                 }
               },
+              "relatedClaimId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "sql/char@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 36
+                  }
+                }
+              },
               "relatedItemId": {
                 "nullable": true,
                 "type": {
@@ -545,6 +555,9 @@
                 },
                 "message": {
                   "column": "message"
+                },
+                "relatedClaimId": {
+                  "column": "relatedClaimId"
                 },
                 "relatedItemId": {
                   "column": "relatedItemId"
@@ -988,6 +1001,14 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "relatedClaimId": {
+                  "codecId": "sql/char@1",
+                  "nativeType": "character",
+                  "nullable": true,
+                  "typeParams": {
+                    "length": 36
+                  }
+                },
                 "relatedItemId": {
                   "codecId": "sql/char@1",
                   "nativeType": "character",
@@ -1096,7 +1117,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d5a4c082d22f55a7125263406e028c867f2f521a6ec324961a932347617ed596"
+    "storageHash": "bce48d2ceedcfb380b6e26ae4121e22e8a1d1db1cb58a04c6b304de11f7abcd0"
   },
   "execution": {
     "executionHash": "cbee0bb80e32db881dff414aa96c95b90ddff2cf91b468d0b606fc8831a02276",
