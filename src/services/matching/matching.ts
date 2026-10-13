@@ -94,17 +94,36 @@ const getFoundItemMatches = async (foundItemId: string, userId: string) => {
   return { matches: await findMatchesForFoundItem(foundItemId) };
 };
 
+// Open lost-item posts belonging to a specific user that match the found item.
+// Used after a claim approval to auto-recover the claimant's matching lost posts.
+const findUserMatchesForFoundItem = async (
+  foundItemId: string,
+  ownerUserId: string,
+): Promise<LostItemPost[]> => {
+  const matches = await findMatchesForFoundItem(foundItemId);
+  return matches.filter((match) => match.userId === ownerUserId);
+};
+
 const runMatching = async (itemId: string, userId: string) => {
   const foundItem = await foundItemRepository.findFoundItemById(itemId);
   if (foundItem) {
     if (foundItem.userId !== userId) throw new ForbiddenError('You do not own this found item');
 
     const matches = await findMatchesForFoundItem(itemId);
-    await Promise.all(matches.map((match) => notificationService.notifyUser(
-      match.userId,
-      'We found a possible match for your item.',
-      itemId,
-    )));
+    await Promise.all(matches.flatMap((match) => [
+      // Lost item owner: point them at the found post so they can review and claim it
+      notificationService.notifyUser(
+        match.userId,
+        'We found a possible match for your item.',
+        itemId,
+      ),
+      // Finder: point them at the lost post in case they want to invite a claim
+      notificationService.notifyUser(
+        userId,
+        'We found a possible match for your found item.',
+        match.id,
+      ),
+    ]));
     return { matchCount: matches.length };
   }
 
@@ -113,12 +132,21 @@ const runMatching = async (itemId: string, userId: string) => {
   if (lostItem.userId !== userId) throw new ForbiddenError('You do not own this lost item');
 
   const matches = await findMatchesForLostItem(itemId);
-  await Promise.all(matches.map((match) => notificationService.notifyUser(
-    match.userId,
-    'We found a possible match for your item.',
-    match.id,
-  )));
+  await Promise.all(matches.flatMap((match) => [
+    // Finder: point them at the matched lost post so they can compare details
+    notificationService.notifyUser(
+      match.userId,
+      'We found a possible match for your found item.',
+      itemId,
+    ),
+    // Lost item owner: point them at the found post so they can review and claim it
+    notificationService.notifyUser(
+      userId,
+      'We found a possible match for your item.',
+      match.id,
+    ),
+  ]));
   return { matchCount: matches.length };
 };
 
-export { getFoundItemMatches, getLostItemMatches, runMatching };
+export { findUserMatchesForFoundItem, getFoundItemMatches, getLostItemMatches, runMatching };
