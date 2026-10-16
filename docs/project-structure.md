@@ -19,36 +19,25 @@ providers; this README describes the backend repository only.
 The backend runs as one deployable Express application and uses layered
 architecture. It is therefore a layered monolith.
 
-## Layered architecture
+
+## Layered Architecture 
 
 TrackBack uses a layered architecture to keep each kind of responsibility in a focused location:
 
-```text
-HTTP Request
-    |
-    v
-Routes and Middleware       Authentication, uploads, routing, and HTTP concerns
-    |
-    v
-Controllers                 Request/response translation
-    |
-    v
-Services                    Use cases and business rules
-    |
-    +--------------------+
-    |                    |
-    v                    v
-Repositories          Integrations
-    |                    |
-    v                    +-------> Cloudinary
-Database persistence     |
-    |                    +-------> SMTP / Email provider
-    v
-Database
+### Flow Diagram
 
+```mermaid
+flowchart TD
+    Client["Client Request"] --> Route["1. Route and Middleware<br/>(src/routes/)"]
+    Route --> Controller["2. Controller<br/>(src/controllers/)"]
+    Controller --> Service["3. Service (Business Logic)<br/>(src/services/)"]
+    Service --> Repo["4. Repository (Data Access)<br/>(src/repositories/)"]
+    Service --> Integration["4. Integration (External APIs)<br/>(src/integrations/)"]
+    Repo --> DB[("PostgreSQL Database")]
+    Integration --> Cloudinary["Cloudinary / SMTP"]
 ```
 
-
+---
 
 ### Why we use this architecture
 
@@ -82,18 +71,22 @@ This architecture improves the following quality attributes:
 
 - **Modularity:** responsibilities are grouped into replaceable modules and
   feature areas such as lost items, found items, claims, and notifications.
+
 - **Coupling:** the layer boundaries reduce unnecessary coupling between HTTP
   handling, business rules, persistence, and external providers. This is
   reduced coupling, not zero coupling: controllers import service modules,
   services import data-access and integration modules, and those modules use
   shared database or provider clients.
+
 - **Cohesion:** each module is intended to contain closely related
   responsibilities. For example, a lost-item service contains lost-item use
   cases, while the Cloudinary integration contains image-provider operations.
   Some cross-feature coordination remains in modules such as matching and
   claims because those workflows intentionally involve multiple features.
+
 - **Maintainability:** business rules are centralized in services instead of
   being duplicated across route handlers.
+
 - **Extensibility:** new endpoints, use cases, repositories, or provider
 
   integrations can be added without changing unrelated layers.
@@ -121,178 +114,7 @@ This architecture improves the following quality attributes:
   endpoint.
 
 
-
-## Design patterns used in this repository
-
-
-
-### Layered architecture
-
-
-
-- **Routes:** `src/routes/` defines the HTTP surface and composes routers.
-
-- **Controllers:** `src/controllers/` handles request and response translation.
-
-- **Services:** `src/services/` implements use cases and
-
-  business rules.
-
-- **Data-access modules:** `src/repositories/` isolates database persistence.
-
-- **Integrations:** `src/integrations/` isolates external service clients.
-
-
-
-### Chain of Responsibility
-
-Express middleware passes a request through a sequence of handlers. Each
-
-handler can continue the chain or stop it with a response/error:
-
-
-
-- `src/middlewares/secure-route.ts` authenticates protected requests.
-
-- `src/middlewares/upload.ts` validates and parses multipart image uploads.
-
-- `src/middlewares/error-handler.ts` is the final centralized error handler.
-
-- `src/app.ts` composes CORS, Helmet, body parsing, cookies, routes, and
-
-  error handling.
-
-- `src/routes/media/media.ts` demonstrates the per-route chain:
-
-  `secureRoute` -> `upload.array("image")` -> controller.
-
-
-
-### Facade pattern
-
-
-
-The repository exposes simpler entry points over more complex subsystems:
-
-
-
-- `src/routes/gateway.ts` is a routing facade that presents one application
-
-  gateway while composing feature routers.
-
-- `src/integrations/cloudinary/cloudinaryService.ts` exposes
-
-  `uploadImage`, `uploadImages`, `deleteImage`, and `deleteImages` instead of
-
-  exposing Cloudinary SDK details to controllers.
-
-- `src/integrations/email/emailService.ts` exposes `sendEmail` and hides
-
-  transporter setup, template selection, and SMTP details.
-
-
-
-### Adapter pattern
-
-
-
-The integration modules adapt third-party APIs to application-oriented
-
-functions:
-
-
-
-- `src/integrations/cloudinary/cloudinaryService.ts` converts Cloudinary
-
-  upload/delete callbacks and streams into promise-based application methods.
-
-- `src/integrations/email/emailService.ts` converts the application's email
-
-  payload and template types into Nodemailer's `sendMail` shape.
-
-
-
-### Factory pattern
-
-
-
-Factory functions centralize the construction of objects or configured
-
-operations:
-
-
-
-- `src/integrations/email/emailTemplates.ts` uses
-
-  `createPasswordEmailTemplate` to build the shared HTML email layout from
-
-  title, message, URL, recipient, and expiry details.
-
-
-
-### Strategy pattern
-
-
-
-The email template map provides interchangeable strategies for different
-
-password-email flows while keeping selection separate from email delivery:
-
-
-
-- `src/integrations/email/emailTemplates.ts` defines the `FORGOT` and `RESET`
-
-  template strategies.
-
-- `src/integrations/email/emailService.ts` selects the strategy based on
-
-  `payload.type`, then sends the resulting template through the shared SMTP
-
-  transporter.
-
-
-
-This allows another email type to be added as a new template strategy without
-
-changing the transport setup in `emailService.ts`.
-
-
-
-### Module pattern
-
-
-
-Feature files use ES modules with explicit imports and exports to encapsulate
-
-implementation details:
-
-
-
-- `src/services/*` exports use-case functions while keeping helpers such as
-
-  matching normalization private.
-
-- `src/repositories/*` exports persistence operations while hiding ORM-specific
-
-  ID conversion and result mapping.
-
-- `src/integrations/cloudinary/cloudinaryFolders.ts` centralizes valid upload
-
-  folder names as a shared module.
-
-
-
-The repository does not currently use a class-based dependency-injection
-
-container, a separate microservice architecture, or a formal CQRS/event-sourcing
-
-implementation.
-
-
-
 ## Cloudinary integration
-
-
 
                 Shared upload API
 
@@ -372,34 +194,23 @@ const CLOUDINARY_FOLDERS = {
 
 ```
 
-
-
 Pass the folder key to the upload service to organize the images in cloudinary:
-
-
 
 ```ts
 
 const images = await uploadImages(files, CLOUDINARY_FOLDERS.LOST_ITEM);
 
 
-
 const images = await uploadImages(files, CLOUDINARY_FOLDERS.USER_PROFILE);
-
-
 
 ```
 
 
 
 With `CLOUDINARY_ROOT_FOLDER=trackback-dev`, the images are stored under:
-
-
-
 ```text
 
 trackback-dev/lost-items/images
-
 ```
 
 
