@@ -95,7 +95,7 @@ const forgotPassword = async (email: string) => {
   );
   
   // front-end page route
-  const resetUrl = new URL("/reset-password", frontendUrl);
+  const resetUrl = new URL("/auth/reset-password", frontendUrl);
   resetUrl.searchParams.set("token", resetToken);
 
   await sendEmail({
@@ -149,7 +149,7 @@ const resetPassword = async (token: string, password: string) => {
     receiverEmail: user.email,
     recipientName: user.name,
     type: "RESET",
-    url: new URL("/login", frontendUrl).toString(), // login page route
+    url: new URL("/auth/login", frontendUrl).toString(), // login page route
   });
 
 };
