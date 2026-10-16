@@ -292,8 +292,8 @@ export type FieldOutputTypes = {
       readonly id: Char<36>;
       readonly isRead: CodecTypes['pg/bool@1']['output'];
       readonly message: CodecTypes['pg/text@1']['output'];
-      readonly relatedItemId: Char<36> | null;
       readonly relatedClaimId: Char<36> | null;
+      readonly relatedItemId: Char<36> | null;
       readonly userId: Char<36>;
     };
     readonly User: {
@@ -355,8 +355,8 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['sql/char@1']['input'];
       readonly isRead: CodecTypes['pg/bool@1']['input'];
       readonly message: CodecTypes['pg/text@1']['input'];
-      readonly relatedItemId: CodecTypes['sql/char@1']['input'] | null;
       readonly relatedClaimId: CodecTypes['sql/char@1']['input'] | null;
+      readonly relatedItemId: CodecTypes['sql/char@1']['input'] | null;
       readonly userId: CodecTypes['sql/char@1']['input'];
     };
     readonly User: {
@@ -418,8 +418,8 @@ export type StorageColumnTypes = {
       readonly id: Char<36>;
       readonly isRead: CodecTypes['pg/bool@1']['output'];
       readonly message: CodecTypes['pg/text@1']['output'];
-      readonly relatedItemId: Char<36> | null;
       readonly relatedClaimId: Char<36> | null;
+      readonly relatedItemId: Char<36> | null;
       readonly userId: Char<36>;
     };
     readonly User: {
@@ -481,8 +481,8 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['sql/char@1']['input'];
       readonly isRead: CodecTypes['pg/bool@1']['input'];
       readonly message: CodecTypes['pg/text@1']['input'];
-      readonly relatedItemId: CodecTypes['sql/char@1']['input'] | null;
       readonly relatedClaimId: CodecTypes['sql/char@1']['input'] | null;
+      readonly relatedItemId: CodecTypes['sql/char@1']['input'] | null;
       readonly userId: CodecTypes['sql/char@1']['input'];
     };
     readonly User: {
@@ -551,8 +551,8 @@ export namespace Models {
     id: Char<36>;
     isRead: CodecTypes['pg/bool@1']['output'];
     message: CodecTypes['pg/text@1']['output'];
-    relatedItemId: Char<36> | null;
     relatedClaimId: Char<36> | null;
+    relatedItemId: Char<36> | null;
     userId: Char<36>;
     user: public_User;
     readonly [RelationKeys]?: 'user';
@@ -814,13 +814,13 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
-                readonly relatedItemId: {
+                readonly relatedClaimId: {
                   readonly nativeType: 'character';
                   readonly codecId: 'sql/char@1';
                   readonly nullable: true;
                   readonly typeParams: { readonly length: 36 };
                 };
-                readonly relatedClaimId: {
+                readonly relatedItemId: {
                   readonly nativeType: 'character';
                   readonly codecId: 'sql/char@1';
                   readonly nullable: true;
@@ -1236,7 +1236,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly relatedItemId: {
+              readonly relatedClaimId: {
                 readonly nullable: true;
                 readonly type: {
                   readonly kind: 'scalar';
@@ -1244,7 +1244,7 @@ type ContractBase = Omit<
                   readonly typeParams: { readonly length: 36 };
                 };
               };
-              readonly relatedClaimId: {
+              readonly relatedItemId: {
                 readonly nullable: true;
                 readonly type: {
                   readonly kind: 'scalar';
@@ -1280,8 +1280,8 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly isRead: { readonly column: 'isRead' };
                 readonly message: { readonly column: 'message' };
-                readonly relatedItemId: { readonly column: 'relatedItemId' };
                 readonly relatedClaimId: { readonly column: 'relatedClaimId' };
+                readonly relatedItemId: { readonly column: 'relatedItemId' };
                 readonly userId: { readonly column: 'userId' };
               };
             };
