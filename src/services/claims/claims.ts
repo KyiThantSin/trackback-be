@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import * as claimRepository from '@/repositories/claimRepository';
+import * as claimInviteRepository from '@/repositories/claimInviteRepository';
 import * as notificationService from '@/services/notifications/notifications';
 import * as matchingService from '@/services/matching/matching';
 import * as foundItemRepository from '@/repositories/foundItemRepository';
 import * as lostItemRepository from '@/repositories/lostItemRepository';
-import * as notificationRepository from '@/repositories/notificationRepository';
 import * as userRepository from '@/repositories/userRepository';
 import type {
   ClaimDetailResponse,
@@ -168,14 +168,20 @@ const reviewClaim = async (id: string, decision: ReviewDecision, userId: string)
   );
 
   if (decision === 'approve') {
-    // Auto-recover the claimant's open lost-item posts that match this found
-    // item, so both sides of a successful match end up closed.
-    const relatedLostItems = await matchingService.findUserMatchesForFoundItem(
-      claim.foundItemPostId,
-      claim.claimantUserId,
-    );
-    await Promise.all(relatedLostItems.map((lostItem) =>
-      lostItemRepository.updateLostItemStatus(lostItem.id, 'RECOVERED'),
+    // Auto-recover the claimant's lost-item posts tied to this found item:
+    // algorithmic matches plus any posts they were invited to claim (invites
+    // exist precisely for pairs the matcher misses), so both sides of a
+    // successful match end up closed.
+    const [matchedLostItems, invitedLostItems] = await Promise.all([
+      matchingService.findUserMatchesForFoundItem(claim.foundItemPostId, claim.claimantUserId),
+      claimInviteRepository.findOpenLostItemsForClaimant(claim.foundItemPostId, claim.claimantUserId),
+    ]);
+    const lostItemIds = new Set([
+      ...matchedLostItems.map((lostItem) => lostItem.id),
+      ...invitedLostItems.map((lostItem) => lostItem.id),
+    ]);
+    await Promise.all([...lostItemIds].map((lostItemId) =>
+      lostItemRepository.updateLostItemStatus(lostItemId, 'RECOVERED'),
     ));
   }
 
@@ -223,14 +229,26 @@ const sendClaimInvite = async (
     throw new ClaimError(403, 'CANNOT_INVITE_OWN_LOST_POST', 'You cannot send a claim invite for your own lost item post');
   }
 
-  const message = `${finder.name} believes they found your item "${lostItem.title}". Submit a claim for "${foundItem.title}" to confirm it's yours.`;
-  const existingInvite = await notificationRepository
-    .findUnreadByUserRelatedItemAndMessage(lostItem.userId, foundItemPostId, message);
+  const existingInvite = await claimInviteRepository.findByPostPair(foundItemPostId, lostItemId);
   if (existingInvite) {
     throw new ClaimError(409, 'CLAIM_INVITE_ALREADY_SENT', 'You have already invited this user to claim this found item');
   }
 
-  await notificationService.notifyUser(lostItem.userId, message, foundItemPostId);
+  // Persist the invite so the lost post can be auto-recovered when the owner's
+  // claim on this found item is approved, even without an algorithmic match.
+  await claimInviteRepository.create({
+    id: randomUUID(),
+    foundItemPostId,
+    lostItemId,
+    finderUserId,
+    ownerUserId: lostItem.userId,
+  });
+
+  await notificationService.notifyUser(
+    lostItem.userId,
+    `${finder.name} believes they found your item "${lostItem.title}". Submit a claim for "${foundItem.title}" to confirm it's yours.`,
+    foundItemPostId,
+  );
 };
 
 export { getClaimById, getClaims, reviewClaim, sendClaimInvite, submitClaim };

@@ -8,6 +8,10 @@
       "model": "Claim",
       "namespace": "public"
     },
+    "ClaimInvite": {
+      "model": "ClaimInvite",
+      "namespace": "public"
+    },
     "FoundItemPost": {
       "model": "FoundItemPost",
       "namespace": "public"
@@ -170,6 +174,157 @@
               },
               "namespaceId": "public",
               "table": "Claim"
+            }
+          },
+          "ClaimInvite": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "finderUserId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sql/char@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 36
+                  }
+                }
+              },
+              "foundItemPostId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sql/char@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 36
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sql/char@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 36
+                  }
+                }
+              },
+              "lostItemId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sql/char@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 36
+                  }
+                }
+              },
+              "ownerUserId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sql/char@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 36
+                  }
+                }
+              }
+            },
+            "relations": {
+              "finder": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "finderUserId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "foundItem": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "foundItemPostId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "FoundItemPost",
+                  "namespace": "public"
+                }
+              },
+              "lostItem": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "lostItemId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "LostItemPost",
+                  "namespace": "public"
+                }
+              },
+              "owner": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "ownerUserId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "finderUserId": {
+                  "column": "finderUserId"
+                },
+                "foundItemPostId": {
+                  "column": "foundItemPostId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "lostItemId": {
+                  "column": "lostItemId"
+                },
+                "ownerUserId": {
+                  "column": "ownerUserId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ClaimInvite"
             }
           },
           "FoundItemPost": {
@@ -830,6 +985,63 @@
               },
               "uniques": []
             },
+            "ClaimInvite": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "finderUserId": {
+                  "codecId": "sql/char@1",
+                  "nativeType": "character",
+                  "nullable": false,
+                  "typeParams": {
+                    "length": 36
+                  }
+                },
+                "foundItemPostId": {
+                  "codecId": "sql/char@1",
+                  "nativeType": "character",
+                  "nullable": false,
+                  "typeParams": {
+                    "length": 36
+                  }
+                },
+                "id": {
+                  "codecId": "sql/char@1",
+                  "nativeType": "character",
+                  "nullable": false,
+                  "typeParams": {
+                    "length": 36
+                  }
+                },
+                "lostItemId": {
+                  "codecId": "sql/char@1",
+                  "nativeType": "character",
+                  "nullable": false,
+                  "typeParams": {
+                    "length": 36
+                  }
+                },
+                "ownerUserId": {
+                  "codecId": "sql/char@1",
+                  "nativeType": "character",
+                  "nullable": false,
+                  "typeParams": {
+                    "length": 36
+                  }
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "FoundItemPost": {
               "columns": {
                 "category": {
@@ -1117,10 +1329,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "bce48d2ceedcfb380b6e26ae4121e22e8a1d1db1cb58a04c6b304de11f7abcd0"
+    "storageHash": "6422eab430502f6f3046aefba64761ce8ada1b683aec096ae16327ccaef0ab9b"
   },
   "execution": {
-    "executionHash": "cbee0bb80e32db881dff414aa96c95b90ddff2cf91b468d0b606fc8831a02276",
+    "executionHash": "5f7de9715ddf2e4405bf91067f4f30aaf49751fd880e15aa288704467d869f20",
     "mutations": {
       "defaults": [
         {
@@ -1158,6 +1370,28 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "Claim"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "createdAt",
+            "namespace": "public",
+            "table": "ClaimInvite"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv7",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "ClaimInvite"
           }
         },
         {
