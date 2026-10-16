@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'bce48d2ceedcfb380b6e26ae4121e22e8a1d1db1cb58a04c6b304de11f7abcd0'>;
+  StorageHashBase<'6422eab430502f6f3046aefba64761ce8ada1b683aec096ae16327ccaef0ab9b'>;
 export type ExecutionHash =
-  ExecutionHashBase<'cbee0bb80e32db881dff414aa96c95b90ddff2cf91b468d0b606fc8831a02276'>;
+  ExecutionHashBase<'5f7de9715ddf2e4405bf91067f4f30aaf49751fd880e15aa288704467d869f20'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -261,6 +261,14 @@ export type FieldOutputTypes = {
       readonly status: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly ClaimInvite: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly finderUserId: Char<36>;
+      readonly foundItemPostId: Char<36>;
+      readonly id: Char<36>;
+      readonly lostItemId: Char<36>;
+      readonly ownerUserId: Char<36>;
+    };
     readonly FoundItemPost: {
       readonly category: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -323,6 +331,14 @@ export type FieldInputTypes = {
       readonly proofPhotoUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly ClaimInvite: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly finderUserId: CodecTypes['sql/char@1']['input'];
+      readonly foundItemPostId: CodecTypes['sql/char@1']['input'];
+      readonly id: CodecTypes['sql/char@1']['input'];
+      readonly lostItemId: CodecTypes['sql/char@1']['input'];
+      readonly ownerUserId: CodecTypes['sql/char@1']['input'];
     };
     readonly FoundItemPost: {
       readonly category: CodecTypes['pg/text@1']['input'];
@@ -387,6 +403,14 @@ export type StorageColumnTypes = {
       readonly status: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly ClaimInvite: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly finderUserId: Char<36>;
+      readonly foundItemPostId: Char<36>;
+      readonly id: Char<36>;
+      readonly lostItemId: Char<36>;
+      readonly ownerUserId: Char<36>;
+    };
     readonly FoundItemPost: {
       readonly category: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -449,6 +473,14 @@ export type StorageColumnInputTypes = {
       readonly proofPhotoUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly status: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly ClaimInvite: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly finderUserId: CodecTypes['sql/char@1']['input'];
+      readonly foundItemPostId: CodecTypes['sql/char@1']['input'];
+      readonly id: CodecTypes['sql/char@1']['input'];
+      readonly lostItemId: CodecTypes['sql/char@1']['input'];
+      readonly ownerUserId: CodecTypes['sql/char@1']['input'];
     };
     readonly FoundItemPost: {
       readonly category: CodecTypes['pg/text@1']['input'];
@@ -516,6 +548,19 @@ export namespace Models {
     foundItem: public_FoundItemPost;
     readonly [RelationKeys]?: 'claimant' | 'foundItem';
   };
+  export type public_ClaimInvite = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    finderUserId: Char<36>;
+    foundItemPostId: Char<36>;
+    id: Char<36>;
+    lostItemId: Char<36>;
+    ownerUserId: Char<36>;
+    finder: public_User;
+    foundItem: public_FoundItemPost;
+    lostItem: public_LostItemPost;
+    owner: public_User;
+    readonly [RelationKeys]?: 'finder' | 'foundItem' | 'lostItem' | 'owner';
+  };
   export type public_FoundItemPost = {
     category: CodecTypes['pg/text@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -580,6 +625,7 @@ export namespace Models {
 export declare const models: {
   public: {
     Claim: Models.public_Claim;
+    ClaimInvite: Models.public_ClaimInvite;
     FoundItemPost: Models.public_FoundItemPost;
     LostItemPost: Models.public_LostItemPost;
     Notification: Models.public_Notification;
@@ -654,6 +700,49 @@ type ContractBase = Omit<
                   readonly nativeType: 'timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
+            readonly ClaimInvite: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+                readonly finderUserId: {
+                  readonly nativeType: 'character';
+                  readonly codecId: 'sql/char@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly length: 36 };
+                };
+                readonly foundItemPostId: {
+                  readonly nativeType: 'character';
+                  readonly codecId: 'sql/char@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly length: 36 };
+                };
+                readonly id: {
+                  readonly nativeType: 'character';
+                  readonly codecId: 'sql/char@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly length: 36 };
+                };
+                readonly lostItemId: {
+                  readonly nativeType: 'character';
+                  readonly codecId: 'sql/char@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly length: 36 };
+                };
+                readonly ownerUserId: {
+                  readonly nativeType: 'character';
+                  readonly codecId: 'sql/char@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly length: 36 };
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
@@ -914,6 +1003,10 @@ type ContractBase = Omit<
   readonly targetFamily: 'sql';
   readonly roots: {
     readonly Claim: { readonly namespace: 'public' & NamespaceId; readonly model: 'Claim' };
+    readonly ClaimInvite: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ClaimInvite';
+    };
     readonly FoundItemPost: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'FoundItemPost';
@@ -1025,6 +1118,113 @@ type ContractBase = Omit<
                 readonly proofPhotoUrl: { readonly column: 'proofPhotoUrl' };
                 readonly status: { readonly column: 'status' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly ClaimInvite: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly finderUserId: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/char@1';
+                  readonly typeParams: { readonly length: 36 };
+                };
+              };
+              readonly foundItemPostId: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/char@1';
+                  readonly typeParams: { readonly length: 36 };
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/char@1';
+                  readonly typeParams: { readonly length: 36 };
+                };
+              };
+              readonly lostItemId: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/char@1';
+                  readonly typeParams: { readonly length: 36 };
+                };
+              };
+              readonly ownerUserId: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/char@1';
+                  readonly typeParams: { readonly length: 36 };
+                };
+              };
+            };
+            readonly relations: {
+              readonly finder: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['finderUserId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly foundItem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FoundItemPost';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['foundItemPostId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly lostItem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'LostItemPost';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['lostItemId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly owner: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['ownerUserId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'ClaimInvite';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly finderUserId: { readonly column: 'finderUserId' };
+                readonly foundItemPostId: { readonly column: 'foundItemPostId' };
+                readonly id: { readonly column: 'id' };
+                readonly lostItemId: { readonly column: 'lostItemId' };
+                readonly ownerUserId: { readonly column: 'ownerUserId' };
               };
             };
           };
@@ -1462,6 +1662,22 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'Claim';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'createdAt';
+            readonly namespace: 'public';
+            readonly table: 'ClaimInvite';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'uuidv7'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'id';
+            readonly namespace: 'public';
+            readonly table: 'ClaimInvite';
           };
         },
         {
